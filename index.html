@@ -1,0 +1,787 @@
+<!doctype html>
+<html lang="ne">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="उच्च अदालतको एकल तथा संयुक्त इजलासको दैनिक पेसी सूची source बाट स्वच्छ preview बनाउने उपकरण।">
+  <title>उच्च अदालत पेसी सूची</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --ink: #1b2540;
+  --ink-soft: #536078;
+  --paper: #ffffff;
+  --surface: #f3f5f9;
+  --line: #dce1ea;
+  --accent: #8b1e2d;
+  --accent-dark: #681420;
+  --accent-soft: #f8eaec;
+  --gold: #c49a42;
+  --shadow: 0 14px 40px rgba(26, 35, 56, .09);
+  --radius: 16px;
+}
+
+[data-theme="dark"] {
+  --ink: #eef1f8;
+  --ink-soft: #abb5c7;
+  --paper: #171c27;
+  --surface: #0f131c;
+  --line: #30394a;
+  --accent: #dc7180;
+  --accent-dark: #efa2ad;
+  --accent-soft: #321d24;
+  --gold: #ddbb71;
+  --shadow: 0 14px 40px rgba(0, 0, 0, .28);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: "Noto Sans Devanagari", "Kalimati", sans-serif;
+  line-height: 1.55;
+}
+button, input, select, textarea { font: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  outline-offset: 2px;
+}
+
+.app-header {
+  position: sticky;
+  z-index: 20;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 78px;
+  padding: 12px clamp(18px, 4vw, 60px);
+  color: white;
+  background: linear-gradient(115deg, #67131f, #8b1e2d 55%, #5a111b);
+  border-bottom: 3px solid var(--gold);
+  box-shadow: 0 8px 28px rgba(56, 8, 15, .22);
+}
+.brand { display: flex; align-items: center; gap: 13px; }
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgba(255,255,255,.55);
+  border-radius: 50%;
+  background: rgba(255,255,255,.11);
+  font-weight: 700;
+}
+.brand h1 { margin: 0; font-size: clamp(1.1rem, 2.1vw, 1.5rem); line-height: 1.25; }
+.eyebrow { margin: 0 0 1px; color: #eed3a1; font: 600 .64rem/1.1 ui-sans-serif, system-ui, sans-serif; letter-spacing: .16em; }
+.header-actions { display: flex; gap: 8px; align-items: center; }
+.icon-button, .ghost-button {
+  min-height: 40px;
+  padding: 8px 13px;
+  border: 1px solid rgba(255,255,255,.35);
+  border-radius: 10px;
+  color: white;
+  background: rgba(255,255,255,.08);
+  text-decoration: none;
+  cursor: pointer;
+}
+.icon-button:hover, .ghost-button:hover { background: rgba(255,255,255,.16); }
+
+.workspace { width: min(1500px, 100%); margin: 0 auto; padding: 30px clamp(14px, 3vw, 42px) 70px; }
+.source-panel, .preview-section, .help-section {
+  margin-bottom: 24px;
+  padding: clamp(18px, 3vw, 30px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+  box-shadow: var(--shadow);
+}
+.section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 16px; }
+.section-heading h2, .help-section h2 { margin: 2px 0 3px; font-size: clamp(1.25rem, 2vw, 1.65rem); }
+.section-heading p:not(.step) { margin: 0; color: var(--ink-soft); }
+.step { margin: 0; color: var(--accent); font: 700 .72rem/1.3 ui-sans-serif, system-ui, sans-serif; letter-spacing: .13em; }
+
+#sourceInput {
+  display: block;
+  width: 100%;
+  min-height: 330px;
+  resize: vertical;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  font: 13px/1.6 ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+#sourceInput:focus { border-color: var(--accent); }
+.source-footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 14px; }
+.button-row { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; }
+button { border: 0; }
+.primary-button, .secondary-button, .text-button, .file-button {
+  min-height: 42px;
+  border-radius: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: transform .16s ease, background .16s ease, border-color .16s ease;
+}
+.primary-button { color: #fff; background: var(--accent); font-weight: 600; }
+.primary-button:hover { background: var(--accent-dark); transform: translateY(-1px); }
+.secondary-button, .file-button { border: 1px solid var(--line); color: var(--ink); background: var(--paper); font-weight: 600; }
+.secondary-button:hover, .file-button:hover { border-color: var(--accent); color: var(--accent); }
+.text-button { color: var(--accent); background: transparent; }
+.text-button:hover { background: var(--accent-soft); }
+button:disabled { opacity: .45; pointer-events: none; }
+.muted { color: var(--ink-soft); font-size: .9rem; }
+
+.summary-grid { display: grid; grid-template-columns: repeat(4, minmax(120px, 1fr)); gap: 12px; margin: 18px 0; }
+.summary-grid article { padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.summary-grid span { display: block; color: var(--ink-soft); font-size: .85rem; }
+.summary-grid strong { display: block; margin-top: 2px; color: var(--accent); font-size: 1.65rem; }
+
+.filter-bar {
+  display: grid;
+  grid-template-columns: minmax(150px, .7fr) minmax(150px, .7fr) minmax(230px, 1.5fr) auto;
+  align-items: end;
+  gap: 12px;
+  margin: 16px 0 22px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+.filter-bar label span { display: block; margin: 0 0 5px; color: var(--ink-soft); font-size: .78rem; font-weight: 600; }
+.filter-bar select, .filter-bar input {
+  width: 100%;
+  min-height: 42px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.empty-state { padding: 60px 20px; text-align: center; color: var(--ink-soft); border: 1px dashed var(--line); border-radius: 14px; }
+.empty-state h3 { margin: 8px 0 5px; color: var(--ink); }
+.empty-state p { max-width: 620px; margin: 0 auto; }
+.empty-icon { display: grid; place-items: center; width: 56px; height: 56px; margin: auto; border-radius: 50%; color: var(--accent); background: var(--accent-soft); font-size: 2rem; }
+
+.court-document { color: #111; background: #fff; }
+.document-cover { padding: 18px 16px 24px; border: 1px solid #cfd3db; border-bottom: 3px double #555; text-align: center; }
+.document-cover .court-name { margin: 0; font-size: 1.55rem; }
+.document-cover .cause-title { margin: 5px 0 0; font-size: 1.2rem; }
+.document-cover .cause-date { margin: 4px 0 0; }
+.bench-sheet { margin-top: 24px; border: 1px solid #aeb4bd; break-inside: avoid-page; }
+.bench-head { display: grid; grid-template-columns: 130px 1fr 170px; min-height: 100px; border-bottom: 1px solid #aeb4bd; }
+.bench-number, .bench-judges, .bench-type { padding: 14px; }
+.bench-number { border-right: 1px solid #aeb4bd; font-weight: 700; }
+.bench-judges { text-align: center; }
+.bench-judges strong { display: block; margin-bottom: 7px; font-size: 1.05rem; }
+.bench-judges span { display: block; }
+.bench-type { display: grid; place-items: center; border-left: 1px solid #aeb4bd; font-weight: 700; }
+.table-wrap { overflow: auto; }
+.case-table { width: 100%; min-width: 1150px; border-collapse: collapse; font-size: .79rem; }
+.case-table th { position: sticky; top: 77px; z-index: 2; padding: 8px 7px; color: #fff; background: #6f1824; text-align: center; }
+.case-table td { padding: 8px 7px; border-top: 1px solid #c6cad1; border-right: 1px solid #d8dbe0; vertical-align: top; }
+.case-table td:last-child { border-right: 0; }
+.case-table tbody tr:nth-child(even) { background: #f6f7f9; }
+.case-table tbody tr:hover { background: #fff4db; }
+.case-table .serial, .case-table .date, .case-table .case-no { white-space: nowrap; }
+.case-table a { color: #781926; font-weight: 600; text-decoration: none; }
+.case-table a:hover { text-decoration: underline; }
+.bench-footer { display: flex; justify-content: space-between; gap: 12px; padding: 9px 12px; color: #555; background: #f4f5f7; border-top: 1px solid #c6cad1; font-size: .78rem; }
+.no-results { padding: 34px; border: 1px dashed var(--line); border-radius: 12px; text-align: center; color: var(--ink-soft); }
+
+.help-section ol { padding-left: 24px; }
+.help-section li { margin: 8px 0; }
+.privacy-note { margin-top: 20px; padding: 12px 14px; border-left: 4px solid var(--gold); background: var(--surface); color: var(--ink-soft); }
+.toast { position: fixed; z-index: 50; right: 22px; bottom: 22px; max-width: 360px; padding: 11px 16px; border-radius: 10px; color: #fff; background: #26324a; box-shadow: var(--shadow); opacity: 0; transform: translateY(12px); pointer-events: none; transition: .2s ease; }
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.error { background: #9d2635; }
+.sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+@media (max-width: 850px) {
+  .filter-bar { grid-template-columns: 1fr 1fr; }
+  .search-field { grid-column: 1 / -1; }
+  .summary-grid { grid-template-columns: 1fr 1fr; }
+  .bench-head { grid-template-columns: 90px 1fr; }
+  .bench-type { grid-column: 1 / -1; border: 0; border-top: 1px solid #aeb4bd; padding: 8px; }
+}
+@media (max-width: 620px) {
+  .app-header, .section-heading, .source-footer { align-items: stretch; }
+  .app-header { position: static; }
+  .app-header, .section-heading, .source-footer { flex-direction: column; }
+  .header-actions { align-self: flex-end; margin-top: -50px; }
+  .ghost-button { display: none; }
+  .workspace { padding-top: 16px; }
+  .source-panel, .preview-section, .help-section { padding: 16px; }
+  #sourceInput { min-height: 260px; }
+  .button-row > * { flex: 1 1 auto; }
+  .filter-bar { grid-template-columns: 1fr; }
+  .search-field { grid-column: auto; }
+  .bench-head { display: block; }
+  .bench-number, .bench-type { border: 0; border-bottom: 1px solid #aeb4bd; text-align: center; }
+}
+
+@media print {
+  @page { size: A4 landscape; margin: 9mm; }
+  body { background: #fff; }
+  .app-header, .source-panel, .preview-heading, .summary-grid, .filter-bar, .help-section, .toast, .empty-state { display: none !important; }
+  .workspace, .preview-section { width: auto; margin: 0; padding: 0; border: 0; box-shadow: none; }
+  .bench-sheet { break-before: page; margin: 0; }
+  .bench-sheet:first-of-type { break-before: auto; }
+  .table-wrap { overflow: visible; }
+  .case-table { min-width: 0; font-size: 7.5pt; }
+  .case-table th { position: static; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .case-table td, .case-table th { padding: 4px; }
+  .document-cover { padding-top: 0; }
+}
+
+</style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">न्या</div>
+      <div>
+        <p class="eyebrow">HIGH COURT CAUSE LIST</p>
+        <h1>उच्च अदालत पेसी सूची</h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="themeToggle" class="icon-button" type="button" title="रङ परिवर्तन" aria-label="रङ परिवर्तन">◐</button>
+      <a class="ghost-button" href="#help">प्रयोग विधि</a>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <section class="source-panel" aria-labelledby="sourceTitle">
+      <div class="section-heading">
+        <div>
+          <p class="step">१ · SOURCE</p>
+          <h2 id="sourceTitle">CMS source राख्नुहोस्</h2>
+          <p>Raw HTML वा Markdown मा आएको escaped HTML दुवै स्वीकार हुन्छ।</p>
+        </div>
+        <label class="file-button">
+          <input id="fileInput" type="file" accept=".html,.htm,.txt,.md,text/html,text/plain" hidden>
+          फाइल खोल्नुहोस्
+        </label>
+      </div>
+
+      <label class="sr-only" for="sourceInput">उच्च अदालतको cause-list source</label>
+      <textarea id="sourceInput" spellcheck="false" placeholder="उच्च अदालतको दैनिक पेसी सूचीको source यहाँ paste गर्नुहोस्…"></textarea>
+
+      <div class="source-footer">
+        <span id="sourceStatus" class="muted">Source राखेपछि Preview बनाउनुहोस्।</span>
+        <div class="button-row">
+          <button id="clearButton" class="text-button" type="button">खाली गर्नुहोस्</button>
+          <button id="sampleButton" class="secondary-button" type="button">नमुना हेर्नुहोस्</button>
+          <button id="renderButton" class="primary-button" type="button">Preview बनाउनुहोस् <span aria-hidden="true">→</span></button>
+        </div>
+      </div>
+    </section>
+
+    <section id="previewSection" class="preview-section" aria-labelledby="previewTitle">
+      <div class="section-heading preview-heading">
+        <div>
+          <p class="step">२ · PREVIEW</p>
+          <h2 id="previewTitle">परिष्कृत पेसी सूची</h2>
+          <p id="previewSubtitle">Source बाट इजलास र मुद्दा छुट्याएर यहाँ देखाइन्छ।</p>
+        </div>
+        <div class="button-row preview-actions">
+          <button id="printButton" class="secondary-button" type="button" disabled>प्रिन्ट / PDF</button>
+          <button id="downloadButton" class="primary-button" type="button" disabled>HTML डाउनलोड</button>
+        </div>
+      </div>
+
+      <div id="summaryCards" class="summary-grid" hidden>
+        <article><span>इजलास</span><strong id="benchCount">०</strong></article>
+        <article><span>एकल</span><strong id="singleCount">०</strong></article>
+        <article><span>संयुक्त</span><strong id="divisionCount">०</strong></article>
+        <article><span>जम्मा मुद्दा</span><strong id="caseCount">०</strong></article>
+      </div>
+
+      <div id="filters" class="filter-bar" hidden>
+        <label>
+          <span>इजलास प्रकार</span>
+          <select id="benchTypeFilter">
+            <option value="all">सबै</option>
+            <option value="single">एकल इजलास</option>
+            <option value="division">संयुक्त इजलास</option>
+            <option value="commercial">वाणिज्य इजलास</option>
+            <option value="other">अन्य इजलास</option>
+          </select>
+        </label>
+        <label>
+          <span>इजलास</span>
+          <select id="benchFilter"><option value="all">सबै इजलास</option></select>
+        </label>
+        <label class="search-field">
+          <span>मुद्दा खोज्नुहोस्</span>
+          <input id="caseSearch" type="search" placeholder="मुद्दा नं., पक्ष, विषय वा कैफियत">
+        </label>
+        <button id="resetFilters" class="text-button" type="button">Filter हटाउनुहोस्</button>
+      </div>
+
+      <div id="emptyState" class="empty-state">
+        <div class="empty-icon" aria-hidden="true">≋</div>
+        <h3>Preview तयार छैन</h3>
+        <p>माथि source paste वा file खोल्नुहोस्। app ले एकल र संयुक्त इजलास स्वतः पहिचान गर्छ।</p>
+      </div>
+
+      <div id="previewRoot" class="cause-list-preview" aria-live="polite"></div>
+    </section>
+
+    <section id="help" class="help-section">
+      <p class="step">३ · GUIDE</p>
+      <h2>छोटो प्रयोग विधि</h2>
+      <ol>
+        <li>उच्च अदालतको दैनिक पेसी सूची page को source copy गर्नुहोस् वा HTML/Markdown file खोल्नुहोस्।</li>
+        <li><strong>Preview बनाउनुहोस्</strong> थिच्नुहोस्। Ctrl/Cmd + Enter ले पनि preview बन्छ।</li>
+        <li>इजलास प्रकार, इजलास नं. वा मुद्दाको विवरणबाट filter गर्नुहोस्।</li>
+        <li>सफा सूची print/PDF गर्नुहोस् वा offline खोल्न मिल्ने standalone HTML डाउनलोड गर्नुहोस्।</li>
+      </ol>
+      <p class="privacy-note">सबै parsing यही browser भित्र हुन्छ; source कुनै server मा पठाइँदैन।</p>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script>
+(() => {
+  "use strict";
+
+  const $ = (selector) => document.querySelector(selector);
+  const els = {
+    source: $("#sourceInput"), file: $("#fileInput"), render: $("#renderButton"),
+    clear: $("#clearButton"), sample: $("#sampleButton"), status: $("#sourceStatus"),
+    root: $("#previewRoot"), empty: $("#emptyState"), summary: $("#summaryCards"),
+    filters: $("#filters"), type: $("#benchTypeFilter"), bench: $("#benchFilter"),
+    search: $("#caseSearch"), reset: $("#resetFilters"), print: $("#printButton"),
+    download: $("#downloadButton"), theme: $("#themeToggle"), toast: $("#toast"),
+    subtitle: $("#previewSubtitle")
+  };
+
+  const state = { data: null, toastTimer: null };
+  const OFFICIAL_BASE = "https://supremecourt.gov.np/appeal/";
+  const nepaliDigits = "०१२३४५६७८९";
+
+  const sampleSource = `<!doctype html>
+<html lang="ne"><body>
+<table class="tableOth">
+  <tr><td><strong>इजलास नं १</strong></td><td rowspan="2" align="center"><strong>उच्च अदालत पाटन</strong><br>मिति २०८३ साल आश्विन १ गते रोज ५ को<br><strong>दैनिक पेसी सूचि</strong></td><td rowspan="2">संयुक्त इजलास</td></tr>
+  <tr><td>मा.मु.न्या. श्री नमुना प्रधान<br>मा.न्या. श्री उदाहरण अधिकारी</td></tr>
+</table>
+<table class="tableOth">
+  <tr><th>क्र. सं</th><th>फाँट</th><th>दर्ता मिति</th><th>मुद्दा</th><th>मुद्दा. नं</th><th>पक्ष ।। बिपक्ष</th><th>का. व्य नाम (पक्ष)</th><th>का. व्य नाम (बिपक्ष)</th><th>कैफियत</th><th>मुद्दाको स्थिति</th><th>आदेश फैसलाको स्थिति</th></tr>
+  <tr><td>१</td><td>रिट</td><td>२०८३।०५।११</td><td>निषेधाज्ञा</td><td><a href="./syspublic.php?d=reports&amp;f=caseprocess&amp;casno=1001">०८३-WO-०३३९</a></td><td>निवेदक क । विरुद्ध । विपक्षी ख</td><td>अधिवक्ता ग</td><td>अधिवक्ता घ</td><td>अन्तरिम आदेश सम्बन्धमा</td><td>आदेश</td><td>कारण देखाउ आदेश</td></tr>
+  <tr><td>२</td><td>वाणिज्य</td><td>२०८२।११।२१</td><td>करार बमोजिम</td><td>०८२-CS-०१२३</td><td>कम्पनी क । विरुद्ध । कम्पनी ख</td><td>अधिवक्ता ङ</td><td>अधिवक्ता च</td><td>सुनुवाइ</td><td>लगातार</td><td>हेर्दाहेर्दै</td></tr>
+</table>
+<table class="tableOth">
+  <tr><td><strong>इजलास नं २</strong></td><td rowspan="2" align="center"><strong>उच्च अदालत पाटन</strong><br>मिति २०८३ साल आश्विन १ गते रोज ५ को<br><strong>दैनिक पेसी सूचि</strong></td><td rowspan="2">एकल इजलास</td></tr>
+  <tr><td>मा.न्या. श्री नमुना न्यायाधीश</td></tr>
+</table>
+<table class="tableOth">
+  <tr><th>क्र. सं</th><th>फाँट</th><th>दर्ता मिति</th><th>मुद्दा</th><th>मुद्दा. नं</th><th>पक्ष ।। बिपक्ष</th><th>का. व्य नाम (पक्ष)</th><th>का. व्य नाम (बिपक्ष)</th><th>कैफियत</th><th>मुद्दाको स्थिति</th><th>आदेश फैसलाको स्थिति</th></tr>
+  <tr><td>१</td><td>पुनरावेदन</td><td>२०८२।१०।०५</td><td>लेनदेन</td><td>०८२-DP-००५६</td><td>पुनरावेदक क । विरुद्ध । प्रत्यर्थी ख</td><td>—</td><td>—</td><td>प्रारम्भिक सुनुवाइ</td><td>सुनुवाइ</td><td>प्रत्यर्थी झिकाउने</td></tr>
+</table>
+</body></html>`;
+
+  function cleanText(value) {
+    return String(value || "")
+      .replace(/\u00a0/g, " ")
+      .replace(/[\t ]+/g, " ")
+      .replace(/\s*\n\s*/g, " ")
+      .trim();
+  }
+
+  function textWithBreaks(element) {
+    if (!element) return "";
+    const clone = element.cloneNode(true);
+    clone.querySelectorAll("br").forEach((br) => br.replaceWith("\n"));
+    return String(clone.textContent || "")
+      .replace(/\u00a0/g, " ")
+      .replace(/[\t ]+/g, " ")
+      .replace(/ *\n */g, "\n")
+      .replace(/\n{2,}/g, "\n")
+      .trim();
+  }
+
+  function normalizeSource(raw) {
+    let source = String(raw || "").replace(/^\uFEFF/, "").replace(/\r/g, "");
+    const lines = source.split("\n");
+    const markdownRows = lines.filter((line) => /^\s*\|/.test(line)).length;
+
+    if (markdownRows > Math.max(5, lines.length * 0.35)) {
+      source = lines.map((line) => {
+        if (!/^\s*\|/.test(line)) return line;
+        const inner = line.replace(/^\s*\|\s?/, "").replace(/\s*\|\s*$/, "");
+        if (/^\s*:?-{3,}:?\s*$/.test(inner)) return "";
+        return inner;
+      }).join("\n");
+    }
+
+    source = source
+      .replace(/\\([<>{}_|&])/g, "$1")
+      .replace(/\[([^\]]*)\]\((https?:\/\/[^)\s]+)\)/g, "$2")
+      .replace(/&amp;amp;/g, "&amp;");
+
+    const start = source.search(/<!doctype\s+html|<html[\s>]|<body[\s>]|<table[\s>]/i);
+    return start > 0 ? source.slice(start) : source;
+  }
+
+  function safeUrl(value) {
+    if (!value) return "";
+    try {
+      const url = new URL(value, OFFICIAL_BASE);
+      return url.protocol === "https:" || url.protocol === "http:" ? url.href : "";
+    } catch (_) { return ""; }
+  }
+
+  function extractDate(text) {
+    const value = cleanText(text);
+    const long = value.match(/मिति\s*(.+?)(?=\s+(?:को\s*)?(?:दैनिक|साप्ताहिक)\s+पे[सश]ी)/i);
+    if (long) return cleanText(long[1].replace(/\s*को\s*$/, ""));
+    const short = value.match(/मिति\s*[:：]?\s*([०-९0-9]{4}[।./-][०-९0-9]{1,2}[।./-][०-९0-9]{1,2})/);
+    return short ? short[1] : "";
+  }
+
+  function extractCourtName(table) {
+    const cells = Array.from(table.querySelectorAll("td"));
+    const exact = cells.map(textWithBreaks).map(cleanText).find((t) => /उच्च\s+अदालत/.test(t));
+    if (exact) {
+      const match = exact.match(/(उच्च\s+अदालत[^\n]*?)(?=\s*मिति|\s*दैनिक|$)/);
+      if (match) return cleanText(match[1]);
+    }
+    return "उच्च अदालत";
+  }
+
+  function extractJudges(table) {
+    const row = table.rows && table.rows[1];
+    const likely = row && row.cells && row.cells[0] ? textWithBreaks(row.cells[0]) : textWithBreaks(table);
+    let lines = likely.split("\n").map(cleanText).filter(Boolean)
+      .filter((line) => /(?:मा\.(?:मु\.)?न्या\.|माननीय\s+न्यायाधीश|न्यायाधीश\s+श्री)/.test(line));
+
+    if (!lines.length) {
+      const all = textWithBreaks(table);
+      lines = all.split("\n").map(cleanText).filter((line) => /न्या\.|न्यायाधीश/.test(line));
+    }
+    return [...new Set(lines)];
+  }
+
+  function rowLink(cell) {
+    const anchor = cell && cell.querySelector("a[href]");
+    return anchor ? safeUrl(anchor.getAttribute("href")) : "";
+  }
+
+  function parseCaseTable(table) {
+    const rows = [];
+    Array.from(table.rows || []).forEach((tr) => {
+      const cells = Array.from(tr.cells || []);
+      if (cells.length < 6 || cells.some((cell) => cell.tagName === "TH")) return;
+      const values = cells.map((cell) => cleanText(textWithBreaks(cell)));
+      if (!values.some(Boolean)) return;
+      if (/क्र\.?\s*सं|दर्ता\s*मिति/.test(values.join(" "))) return;
+
+      while (values.length < 11) values.push("");
+      rows.push({
+        serial: values[0], section: values[1], registrationDate: values[2],
+        subject: values[3], caseNumber: values[4], parties: values[5],
+        counselFor: values[6], counselAgainst: values[7], remarks: values[8],
+        caseStatus: values[9], decisionStatus: values.slice(10).join(" "),
+        caseUrl: rowLink(cells[4]), decisionUrl: rowLink(cells[cells.length - 1])
+      });
+    });
+    return rows;
+  }
+
+  function looksLikeHeaderTable(table) {
+    if (table.querySelector("table")) return false;
+    const text = cleanText(textWithBreaks(table));
+    return /इजलास\s*नं/.test(text) && /(?:दैनिक|साप्ताहिक)\s+पे[सश]ी\s+सूचि?/.test(text);
+  }
+
+  function looksLikeCaseTable(table) {
+    if (table.querySelector("table")) return false;
+    const heads = cleanText(Array.from(table.querySelectorAll("th")).map(textWithBreaks).join(" "));
+    return /क्र\.?\s*सं/.test(heads) && /मुद्दा/.test(heads) && /पक्ष/.test(heads);
+  }
+
+  function parseCauseList(raw) {
+    const normalized = normalizeSource(raw);
+    if (!/<(?:html|body|table)[\s>]/i.test(normalized)) {
+      throw new Error("HTML table भेटिएन। Raw HTML वा CMS source राख्नुहोस्।");
+    }
+
+    const doc = new DOMParser().parseFromString(normalized, "text/html");
+    const tables = Array.from(doc.querySelectorAll("table"));
+    const benches = [];
+    let globalCourt = "उच्च अदालत";
+    let globalDate = "";
+
+    for (let i = 0; i < tables.length; i += 1) {
+      const header = tables[i];
+      if (!looksLikeHeaderTable(header)) continue;
+
+      let caseTable = null;
+      for (let j = i + 1; j < Math.min(tables.length, i + 5); j += 1) {
+        if (looksLikeHeaderTable(tables[j])) break;
+        if (looksLikeCaseTable(tables[j])) { caseTable = tables[j]; break; }
+      }
+      if (!caseTable) continue;
+
+      const headerText = cleanText(textWithBreaks(header));
+      const numberMatch = headerText.match(/इजलास\s*नं\.?\s*([०-९0-9]+)/);
+      const court = extractCourtName(header) || globalCourt;
+      const date = extractDate(textWithBreaks(header)) || globalDate;
+      const type = /संयुक्त\s+इजलास/.test(headerText) ? "division" :
+        /एकल\s+इजलास/.test(headerText) ? "single" :
+        /वाणिज्य\s+इजलास/.test(headerText) ? "commercial" : "other";
+      const typeLabel = type === "division" ? "संयुक्त इजलास" :
+        type === "single" ? "एकल इजलास" :
+        type === "commercial" ? "वाणिज्य इजलास" : "अन्य इजलास";
+      const cases = parseCaseTable(caseTable);
+
+      globalCourt = court;
+      globalDate = date;
+      benches.push({
+        id: `bench-${benches.length + 1}`,
+        number: numberMatch ? numberMatch[1] : toNepaliDigits(benches.length + 1),
+        type, typeLabel, court, date, judges: extractJudges(header), cases
+      });
+    }
+
+    if (!benches.length) {
+      throw new Error("एकल वा संयुक्त इजलासको पेसी सूची पहिचान हुन सकेन। Source पूर्ण रूपमा copy भएको जाँच्नुहोस्।");
+    }
+
+    const court = benches.find((b) => b.court)?.court || globalCourt;
+    const date = benches.find((b) => b.date)?.date || globalDate;
+    return { court, date, benches, parsedAt: new Date().toISOString() };
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "").replace(/[&<>'"]/g, (char) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"
+    })[char]);
+  }
+
+  function toNepaliDigits(value) {
+    return String(value).replace(/\d/g, (digit) => nepaliDigits[Number(digit)]);
+  }
+
+  function linkOrText(text, url) {
+    const label = escapeHtml(text || "—");
+    return url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${label}</a>` : label;
+  }
+
+  function caseRowHTML(item) {
+    return `<tr>
+      <td class="serial">${escapeHtml(item.serial || "—")}</td>
+      <td>${escapeHtml(item.section || "—")}</td>
+      <td class="date">${escapeHtml(item.registrationDate || "—")}</td>
+      <td>${escapeHtml(item.subject || "—")}</td>
+      <td class="case-no">${linkOrText(item.caseNumber, item.caseUrl)}</td>
+      <td>${escapeHtml(item.parties || "—")}</td>
+      <td>${escapeHtml(item.counselFor || "—")}</td>
+      <td>${escapeHtml(item.counselAgainst || "—")}</td>
+      <td>${escapeHtml(item.remarks || "—")}</td>
+      <td>${escapeHtml(item.caseStatus || "—")}</td>
+      <td>${linkOrText(item.decisionStatus, item.decisionUrl)}</td>
+    </tr>`;
+  }
+
+  function benchHTML(bench, cases) {
+    const judges = bench.judges.length
+      ? bench.judges.map((judge) => `<span>${escapeHtml(judge)}</span>`).join("")
+      : "<span>न्यायाधीशको नाम source मा उपलब्ध छैन</span>";
+    const rows = cases.length
+      ? cases.map(caseRowHTML).join("")
+      : `<tr><td colspan="11" style="padding:28px;text-align:center">यस filter मा मुद्दा भेटिएन।</td></tr>`;
+
+    return `<section class="bench-sheet" data-bench-id="${escapeHtml(bench.id)}">
+      <header class="bench-head">
+        <div class="bench-number">इजलास नं. ${escapeHtml(bench.number)}</div>
+        <div class="bench-judges"><strong>${escapeHtml(bench.court)}</strong>${judges}</div>
+        <div class="bench-type">${escapeHtml(bench.typeLabel)}</div>
+      </header>
+      <div class="table-wrap">
+        <table class="case-table">
+          <thead><tr>
+            <th>क्र.सं.</th><th>फाँट</th><th>दर्ता मिति</th><th>मुद्दा</th><th>मुद्दा नं.</th>
+            <th>पक्ष / विपक्ष</th><th>का.व्य. (पक्ष)</th><th>का.व्य. (विपक्ष)</th><th>कैफियत</th>
+            <th>मुद्दाको स्थिति</th><th>आदेश/फैसलाको स्थिति</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      <footer class="bench-footer"><span>इजलास नं. ${escapeHtml(bench.number)}</span><span>${toNepaliDigits(cases.length)} मुद्दा</span></footer>
+    </section>`;
+  }
+
+  function filteredBenches(data) {
+    const type = els.type.value;
+    const benchId = els.bench.value;
+    const query = cleanText(els.search.value).toLocaleLowerCase("ne-NP");
+
+    return data.benches
+      .filter((bench) => type === "all" || bench.type === type)
+      .filter((bench) => benchId === "all" || bench.id === benchId)
+      .map((bench) => {
+        const cases = !query ? bench.cases : bench.cases.filter((item) =>
+          Object.values(item).some((value) => typeof value === "string" && value.toLocaleLowerCase("ne-NP").includes(query))
+        );
+        return { bench, cases };
+      })
+      .filter(({ cases }) => !query || cases.length);
+  }
+
+  function documentHTML(data, filtered = filteredBenches(data)) {
+    if (!filtered.length) return `<div class="no-results">यो filter अनुसार कुनै इजलास वा मुद्दा भेटिएन।</div>`;
+    return `<article class="court-document">
+      <header class="document-cover">
+        <h2 class="court-name">${escapeHtml(data.court)}</h2>
+        <p class="cause-date">${data.date ? `मिति ${escapeHtml(data.date)}` : ""}</p>
+        <h3 class="cause-title">दैनिक पेसी सूची</h3>
+      </header>
+      ${filtered.map(({ bench, cases }) => benchHTML(bench, cases)).join("")}
+    </article>`;
+  }
+
+  function updateStats(data) {
+    const single = data.benches.filter((b) => b.type === "single").length;
+    const division = data.benches.filter((b) => b.type === "division").length;
+    const cases = data.benches.reduce((sum, bench) => sum + bench.cases.length, 0);
+    $("#benchCount").textContent = toNepaliDigits(data.benches.length);
+    $("#singleCount").textContent = toNepaliDigits(single);
+    $("#divisionCount").textContent = toNepaliDigits(division);
+    $("#caseCount").textContent = toNepaliDigits(cases);
+  }
+
+  function populateBenchFilter(data) {
+    els.bench.innerHTML = `<option value="all">सबै इजलास</option>` + data.benches.map((bench) =>
+      `<option value="${escapeHtml(bench.id)}">इजलास नं. ${escapeHtml(bench.number)} — ${escapeHtml(bench.typeLabel)}</option>`
+    ).join("");
+  }
+
+  function renderPreview() {
+    if (!state.data) return;
+    els.root.innerHTML = documentHTML(state.data);
+  }
+
+  function buildPreview() {
+    const raw = els.source.value;
+    if (!raw.trim()) { showToast("पहिले source राख्नुहोस्।", true); els.source.focus(); return; }
+    const started = performance.now();
+
+    try {
+      const data = parseCauseList(raw);
+      state.data = data;
+      els.type.value = "all";
+      els.search.value = "";
+      populateBenchFilter(data);
+      updateStats(data);
+      renderPreview();
+      els.empty.hidden = true;
+      els.summary.hidden = false;
+      els.filters.hidden = false;
+      els.print.disabled = false;
+      els.download.disabled = false;
+      const caseTotal = data.benches.reduce((sum, bench) => sum + bench.cases.length, 0);
+      els.status.textContent = `${toNepaliDigits(data.benches.length)} इजलास र ${toNepaliDigits(caseTotal)} मुद्दा पहिचान भयो।`;
+      els.subtitle.textContent = `${data.court}${data.date ? ` · ${data.date}` : ""}`;
+      showToast(`Preview तयार भयो · ${Math.round(performance.now() - started)} ms`);
+      saveDraft(raw);
+      els.root.scrollIntoView({ behavior: "smooth", block: "start" });
+    } catch (error) {
+      state.data = null;
+      els.root.innerHTML = "";
+      els.empty.hidden = false;
+      els.summary.hidden = true;
+      els.filters.hidden = true;
+      els.print.disabled = true;
+      els.download.disabled = true;
+      els.status.textContent = error.message;
+      showToast(error.message, true);
+    }
+  }
+
+  function saveDraft(raw) {
+    try {
+      if (raw.length < 3_500_000) localStorage.setItem("hcc-source-draft", raw);
+    } catch (_) { /* Storage is optional. */ }
+  }
+
+  function showToast(message, isError = false) {
+    clearTimeout(state.toastTimer);
+    els.toast.textContent = message;
+    els.toast.classList.toggle("error", isError);
+    els.toast.classList.add("show");
+    state.toastTimer = setTimeout(() => els.toast.classList.remove("show"), 3200);
+  }
+
+  function standaloneHTML(data) {
+    const all = data.benches.map((bench) => ({ bench, cases: bench.cases }));
+    const body = documentHTML(data, all);
+    return `<!doctype html><html lang="ne"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(data.court)} — दैनिक पेसी सूची</title><style>
+      @page{size:A4 landscape;margin:9mm}*{box-sizing:border-box}body{margin:0;padding:24px;color:#111;background:#eef0f4;font-family:"Noto Sans Devanagari","Kalimati",sans-serif}.court-document{max-width:1500px;margin:auto;background:#fff}.document-cover{padding:18px 16px 24px;border:1px solid #aeb4bd;border-bottom:3px double #555;text-align:center}.court-name{margin:0;font-size:1.55rem}.cause-title{margin:5px 0 0}.cause-date{margin:4px 0 0}.bench-sheet{margin-top:24px;border:1px solid #aeb4bd;break-inside:avoid-page}.bench-head{display:grid;grid-template-columns:130px 1fr 170px;min-height:100px;border-bottom:1px solid #aeb4bd}.bench-number,.bench-judges,.bench-type{padding:14px}.bench-number{border-right:1px solid #aeb4bd;font-weight:700}.bench-judges{text-align:center}.bench-judges strong,.bench-judges span{display:block}.bench-type{display:grid;place-items:center;border-left:1px solid #aeb4bd;font-weight:700}.table-wrap{overflow:auto}.case-table{width:100%;min-width:1150px;border-collapse:collapse;font-size:.79rem}.case-table th{padding:8px 7px;color:#fff;background:#6f1824;text-align:center}.case-table td{padding:8px 7px;border-top:1px solid #c6cad1;border-right:1px solid #d8dbe0;vertical-align:top}.case-table tbody tr:nth-child(even){background:#f6f7f9}.serial,.date,.case-no{white-space:nowrap}a{color:#781926;font-weight:600}.bench-footer{display:flex;justify-content:space-between;padding:9px 12px;color:#555;background:#f4f5f7;border-top:1px solid #c6cad1;font-size:.78rem}@media print{body{padding:0;background:#fff}.bench-sheet{break-before:page;margin:0}.bench-sheet:first-of-type{break-before:auto}.case-table{min-width:0;font-size:7.5pt}.case-table td,.case-table th{padding:4px}}
+    </style></head><body>${body}</body></html>`;
+  }
+
+  function downloadHTML() {
+    if (!state.data) return;
+    const blob = new Blob([standaloneHTML(state.data)], { type: "text/html;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    const date = state.data.date.replace(/[^०-९0-9]+/g, "") || "cause-list";
+    anchor.href = url;
+    anchor.download = `high-court-cause-list-${date}.html`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  els.render.addEventListener("click", buildPreview);
+  els.sample.addEventListener("click", () => { els.source.value = sampleSource; buildPreview(); });
+  els.clear.addEventListener("click", () => {
+    els.source.value = ""; state.data = null; els.root.innerHTML = ""; els.empty.hidden = false;
+    els.summary.hidden = true; els.filters.hidden = true; els.print.disabled = true; els.download.disabled = true;
+    els.status.textContent = "Source राखेपछि Preview बनाउनुहोस्।";
+    try { localStorage.removeItem("hcc-source-draft"); } catch (_) {}
+    els.source.focus();
+  });
+  els.file.addEventListener("change", async () => {
+    const file = els.file.files && els.file.files[0];
+    if (!file) return;
+    try { els.source.value = await file.text(); els.status.textContent = `${file.name} खोलियो।`; buildPreview(); }
+    catch (_) { showToast("फाइल पढ्न सकिएन।", true); }
+    finally { els.file.value = ""; }
+  });
+  [els.type, els.bench].forEach((el) => el.addEventListener("change", renderPreview));
+  els.search.addEventListener("input", renderPreview);
+  els.reset.addEventListener("click", () => { els.type.value = "all"; els.bench.value = "all"; els.search.value = ""; renderPreview(); });
+  els.print.addEventListener("click", () => window.print());
+  els.download.addEventListener("click", downloadHTML);
+  els.theme.addEventListener("click", () => {
+    const dark = document.documentElement.dataset.theme === "dark";
+    document.documentElement.dataset.theme = dark ? "light" : "dark";
+    try { localStorage.setItem("hcc-theme", dark ? "light" : "dark"); } catch (_) {}
+  });
+  document.addEventListener("keydown", (event) => {
+    if ((event.ctrlKey || event.metaKey) && event.key === "Enter") { event.preventDefault(); buildPreview(); }
+  });
+
+  try {
+    document.documentElement.dataset.theme = localStorage.getItem("hcc-theme") || "light";
+    const draft = localStorage.getItem("hcc-source-draft");
+    if (draft) { els.source.value = draft; els.status.textContent = "अघिल्लो draft पुनःस्थापित भयो।"; }
+  } catch (_) { document.documentElement.dataset.theme = "light"; }
+})();
+
+</script>
+</body>
+</html>
