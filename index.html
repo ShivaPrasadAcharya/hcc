@@ -144,7 +144,7 @@ button:disabled { opacity: .45; pointer-events: none; }
 
 .filter-bar {
   display: grid;
-  grid-template-columns: minmax(150px, .7fr) minmax(150px, .7fr) minmax(230px, 1.5fr) auto;
+  grid-template-columns: repeat(3,minmax(150px,.75fr)) minmax(230px,1.4fr) auto auto;
   align-items: end;
   gap: 12px;
   margin: 16px 0 22px;
@@ -221,20 +221,40 @@ button:disabled { opacity: .45; pointer-events: none; }
 .order-insights label { display:block; margin-top:12px; color:var(--ink-soft); font-size:.78rem; font-weight:700; }
 .order-insights select,.order-insights input { display:block; width:100%; min-height:42px; margin-top:5px; padding:8px 10px; border:1px solid var(--line); border-radius:9px; color:var(--ink); background:var(--paper); }
 .editor-card { min-width:0; overflow:hidden; border:1px solid var(--line); border-radius:14px; background:#e8e9ed; }
-.editor-toolbar { position:sticky; top:78px; z-index:4; display:flex; flex-wrap:wrap; gap:5px; padding:9px; border-bottom:1px solid #c7cad1; background:#fafafa; }
-.editor-toolbar button { min-width:36px; min-height:34px; border:1px solid #d3d5da; border-radius:7px; color:#242833; background:#fff; cursor:pointer; }
-.editor-toolbar button:hover,.editor-toolbar button.active { color:#fff; background:#7b1b29; border-color:#7b1b29; }
 .order-paper { width:min(210mm,calc(100% - 28px)); min-height:297mm; margin:14px auto; padding:22mm 20mm 20mm; color:#111; background:#fff; box-shadow:0 8px 28px rgba(20,25,35,.15); font-family:"Noto Sans Devanagari","Kalimati",serif; font-size:15px; line-height:1.85; outline:none; }
-.order-paper h1,.order-paper h2,.order-paper p { margin-top:0; }
-.order-paper .order-heading { text-align:center; line-height:1.5; }
-.order-paper .order-meta { width:100%; margin:18px 0; border-collapse:collapse; }
-.order-paper .order-meta td { padding:5px 8px; border:1px solid #555; vertical-align:top; }
-.order-paper .signature-block { margin-top:60px; text-align:right; }
+.order-paper h1,.order-paper h2,.order-paper h3,.order-paper p { margin-top:0; }
+.order-paper .order-heading { text-align:center; line-height:1.45; }
+.order-paper .order-heading p,.order-paper .order-heading h2,.order-paper .order-heading h3 { margin-bottom:2px; }
+.order-paper .order-heading .sri { margin-bottom:5px; font-size:1.12rem; font-weight:700; }
+.order-paper .order-heading h2 { font-size:1.25rem; }
+.order-paper .order-heading h3 { font-size:1.05rem; }
+.order-paper .order-title { margin:8px 0 2px; text-decoration:underline; font-size:1.12rem; }
+.order-paper .case-caption { margin:0; text-align:center; font-weight:700; }
+.order-paper .case-subject { margin:0 0 20px; text-align:center; }
+.party-block { margin:16px 0 8px; }
+.party-line { display:flex; align-items:flex-end; gap:8px; margin:7px 0; font-weight:600; }
+.party-name { max-width:74%; }
+.party-leader { flex:1; min-width:35px; border-bottom:2px dotted #222; transform:translateY(-6px); }
+.party-role { min-width:72px; text-align:right; }
+.versus { margin:2px 0 !important; text-align:center; font-weight:700; }
+.order-main-body { min-height:360px; margin-top:20px; text-align:justify; text-indent:42px; white-space:pre-wrap; }
+.order-paper[contenteditable="true"] .order-main-body:empty::before { content:attr(data-placeholder); color:#a4a4a4; font-style:italic; }
+.signature-row { display:grid; grid-template-columns:1fr 1fr; align-items:end; min-height:92px; margin-top:28px; }
+.signature { text-align:center; }
+.signature.right { grid-column:2; }
+.signature-line { display:block; width:145px; margin:0 auto 4px; border-top:1px dotted #333; }
+.signature-name { margin:0; font-size:.82rem; }
+.order-footer { margin-top:28px; font-weight:600; }
+.order-footer .footer-leader { display:inline-block; width:38%; border-bottom:2px dotted #222; transform:translateY(-5px); }
 .editor-status { display:flex; justify-content:space-between; padding:8px 14px; color:#555; background:#fafafa; border-top:1px solid #ccc; font-size:.76rem; }
 .floating-tools { position:fixed; z-index:35; right:18px; top:50%; display:flex; flex-direction:column; gap:8px; transform:translateY(-50%); }
 .floating-tools button { display:flex; align-items:center; gap:8px; min-width:46px; min-height:44px; padding:9px 11px; border:1px solid #d6d9e0; border-radius:12px; color:#fff; background:#731824; box-shadow:0 8px 20px rgba(58,10,17,.2); cursor:pointer; }
 .floating-tools button span { max-width:0; overflow:hidden; opacity:0; transition:.18s; }
 .floating-tools button:hover span { max-width:70px; opacity:1; }
+.format-tools { position:absolute; right:58px; top:50%; display:grid; grid-template-columns:repeat(4,40px); gap:6px; width:max-content; padding:10px; border:1px solid #d8dbe2; border-radius:12px; background:#fff; box-shadow:0 14px 36px rgba(20,25,35,.24); transform:translateY(-50%); }
+.format-tools[hidden] { display:none !important; }
+.format-tools button { display:grid; place-items:center; min-width:38px; min-height:36px; padding:5px; border:1px solid #d3d5da; border-radius:7px; color:#242833; background:#fff; box-shadow:none; }
+.format-tools button:hover,.format-tools button.active { color:#fff; background:#7b1b29; border-color:#7b1b29; }
 .preview-dialog { width:min(1180px,96vw); max-width:none; height:94vh; padding:0; border:0; border-radius:16px; color:var(--ink); background:var(--surface); box-shadow:0 30px 80px rgba(0,0,0,.35); }
 .preview-dialog::backdrop { background:rgba(9,12,20,.76); backdrop-filter:blur(3px); }
 .preview-dialog > header { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; color:#fff; background:#681420; }
@@ -273,12 +293,13 @@ button:disabled { opacity: .45; pointer-events: none; }
   .floating-tools { right:7px; top:auto; bottom:8px; flex-direction:row; transform:none; max-width:calc(100vw - 14px); overflow:auto; }
   .floating-tools button { min-width:43px; padding:8px; }
   .floating-tools button span { display:none; }
+  .format-tools { right:0; top:auto; bottom:53px; grid-template-columns:repeat(4,40px); transform:none; }
 }
 
 @media print {
   @page { size: A4 landscape; margin: 9mm; }
   body { background: #fff; }
-  .app-header, .source-panel, .preview-heading, .summary-grid, .filter-bar, .help-section, .toast, .empty-state, .floating-tools, .order-insights, .editor-toolbar, .editor-status, .order-workspace > .section-heading, .preview-dock, .preview-dialog > header { display: none !important; }
+  .app-header, .source-panel, .preview-heading, .summary-grid, .filter-bar, .help-section, .toast, .empty-state, .floating-tools, .order-insights, .editor-status, .order-workspace > .section-heading, .preview-dock, .preview-dialog > header { display: none !important; }
   .workspace, .preview-section { width: auto; margin: 0; padding: 0; border: 0; box-shadow: none; }
   .bench-sheet { break-before: page; margin: 0; }
   .bench-sheet:first-of-type { break-before: auto; }
@@ -374,6 +395,10 @@ button:disabled { opacity: .45; pointer-events: none; }
           <span>इजलास</span>
           <select id="benchFilter"><option value="all">सबै इजलास</option></select>
         </label>
+        <label>
+          <span>न्यायाधीश</span>
+          <select id="judgeFilter"><option value="all">सबै न्यायाधीश</option></select>
+        </label>
         <label class="search-field">
           <span>मुद्दा खोज्नुहोस्</span>
           <input id="caseSearch" type="search" placeholder="मुद्दा नं., पक्ष, विषय वा कैफियत">
@@ -409,30 +434,14 @@ button:disabled { opacity: .45; pointer-events: none; }
       <div class="order-grid">
         <aside class="order-insights">
           <p class="step">CAUSE-LIST ANALYSIS</p>
-          <h3 id="recommendationTitle">सिफारिस गरिएको ढाँचा</h3>
-          <p id="recommendationReason"></p>
+          <h3 id="recommendationTitle">Cause-list बाट प्राप्त विवरण</h3>
+          <p id="recommendationReason">मुख्य आदेशको व्यहोरा खाली राखिएको छ। आवश्यक व्यहोरा आफैँ लेख्नुहोस्।</p>
           <dl id="caseFacts"></dl>
-          <label>आदेशको ढाँचा
-            <select id="templateSelect"></select>
-          </label>
           <label>मिति
             <input id="orderDate" type="text" placeholder="२०८३।०६।०३">
           </label>
         </aside>
         <div class="editor-card">
-          <div class="editor-toolbar" role="toolbar" aria-label="आदेश सम्पादन उपकरण">
-            <button type="button" data-command="bold" title="Bold"><strong>B</strong></button>
-            <button type="button" data-command="italic" title="Italic"><em>I</em></button>
-            <button type="button" data-command="underline" title="Underline"><u>U</u></button>
-            <button type="button" data-command="justifyLeft" title="बायाँ">≡</button>
-            <button type="button" data-command="justifyCenter" title="बीच">≣</button>
-            <button type="button" data-command="justifyFull" title="दुवैतर्फ">☰</button>
-            <button type="button" data-command="insertOrderedList" title="Numbering">१.</button>
-            <button type="button" data-command="outdent" title="Indent घटाउने">⇤</button>
-            <button type="button" data-command="indent" title="Indent बढाउने">⇥</button>
-            <button type="button" id="formatPainterButton" title="Format painter">🖌</button>
-            <button type="button" data-command="removeFormat" title="Formatting हटाउने">Tx</button>
-          </div>
           <article id="orderEditor" class="order-paper" contenteditable="true" spellcheck="false" aria-label="सम्पादनयोग्य आदेश"></article>
           <footer class="editor-status"><span id="saveStatus">स्वतः सुरक्षित हुन्छ</span><span id="wordCount">० शब्द</span></footer>
         </div>
@@ -456,10 +465,25 @@ button:disabled { opacity: .45; pointer-events: none; }
   <nav id="floatingTools" class="floating-tools" hidden aria-label="द्रुत आदेश उपकरण">
     <button type="button" data-action="save" title="Save">💾<span>Save</span></button>
     <button type="button" data-action="copy" title="Copy">⧉<span>Copy</span></button>
-    <button type="button" data-action="word" title="Word">W<span>Word</span></button>
+    <button type="button" data-action="word" title="Word DOCX">W<span>DOCX</span></button>
+    <button type="button" data-action="rtf" title="RTF">R<span>RTF</span></button>
     <button type="button" data-action="preview" title="Preview">◫<span>Preview</span></button>
     <button type="button" data-action="print" title="Print">⎙<span>Print</span></button>
+    <button id="toolsToggle" type="button" data-action="tools" title="Formatting tools">🛠<span>Tools</span></button>
     <button type="button" data-action="top" title="माथि">↑<span>Top</span></button>
+    <div id="formatTools" class="format-tools" hidden role="toolbar" aria-label="आदेश formatting tools">
+      <button type="button" data-command="bold" title="Bold"><strong>B</strong></button>
+      <button type="button" data-command="italic" title="Italic"><em>I</em></button>
+      <button type="button" data-command="underline" title="Underline"><u>U</u></button>
+      <button type="button" data-command="justifyLeft" title="बायाँ">≡</button>
+      <button type="button" data-command="justifyCenter" title="बीच">≣</button>
+      <button type="button" data-command="justifyFull" title="दुवैतर्फ">☰</button>
+      <button type="button" data-command="insertOrderedList" title="Numbering">१.</button>
+      <button type="button" data-command="outdent" title="Indent घटाउने">⇤</button>
+      <button type="button" data-command="indent" title="Indent बढाउने">⇥</button>
+      <button type="button" id="formatPainterButton" title="Format painter">🖌</button>
+      <button type="button" data-command="removeFormat" title="Formatting हटाउने">Tx</button>
+    </div>
   </nav>
 
   <dialog id="orderPreviewDialog" class="preview-dialog">
@@ -471,7 +495,8 @@ button:disabled { opacity: .45; pointer-events: none; }
     <footer class="preview-dock">
       <button type="button" data-preview-action="save">💾 Save</button>
       <button type="button" data-preview-action="copy">⧉ Copy</button>
-      <button type="button" data-preview-action="word">W Word</button>
+      <button type="button" data-preview-action="word">W DOCX</button>
+      <button type="button" data-preview-action="rtf">R RTF</button>
       <button type="button" data-preview-action="html">⌘ HTML</button>
       <button type="button" data-preview-action="print">⎙ Print</button>
       <button type="button" data-preview-action="close">× Close</button>
@@ -488,12 +513,12 @@ button:disabled { opacity: .45; pointer-events: none; }
     source: $("#sourceInput"), file: $("#fileInput"), render: $("#renderButton"),
     clear: $("#clearButton"), sample: $("#sampleButton"), status: $("#sourceStatus"),
     root: $("#previewRoot"), empty: $("#emptyState"), summary: $("#summaryCards"),
-    filters: $("#filters"), type: $("#benchTypeFilter"), bench: $("#benchFilter"),
+    filters: $("#filters"), type: $("#benchTypeFilter"), bench: $("#benchFilter"), judge: $("#judgeFilter"),
     search: $("#caseSearch"), reset: $("#resetFilters"), print: $("#printButton"),
     download: $("#downloadButton"), theme: $("#themeToggle"), toast: $("#toast"),
     subtitle: $("#previewSubtitle"), deferred: $("#deferredToggle"),
     orderWorkspace: $("#orderWorkspace"), orderEditor: $("#orderEditor"),
-    template: $("#templateSelect"), orderDate: $("#orderDate"),
+    orderDate: $("#orderDate"), formatTools: $("#formatTools"),
     orderContext: $("#orderContext"), recommendationTitle: $("#recommendationTitle"),
     recommendationReason: $("#recommendationReason"), caseFacts: $("#caseFacts"),
     saveStatus: $("#saveStatus"), wordCount: $("#wordCount"),
@@ -794,11 +819,13 @@ button:disabled { opacity: .45; pointer-events: none; }
   function filteredBenches(data) {
     const type = els.type.value;
     const benchId = els.bench.value;
+    const judge = els.judge.value;
     const query = cleanText(els.search.value).toLocaleLowerCase("ne-NP");
 
     return data.benches
       .filter((bench) => type === "all" || bench.type === type)
       .filter((bench) => benchId === "all" || bench.id === benchId)
+      .filter((bench) => judge === "all" || bench.judges.includes(judge))
       .map((bench) => {
         const visible = els.deferred.checked ? bench.cases : bench.cases.filter((item) => !isDeferred(item));
         const cases = !query ? visible : visible.filter((item) =>
@@ -840,6 +867,13 @@ button:disabled { opacity: .45; pointer-events: none; }
     els.bench.innerHTML = `<option value="all">सबै इजलास</option>` + data.benches.map((bench) =>
       `<option value="${escapeHtml(bench.id)}">इजलास नं. ${escapeHtml(bench.number)} — ${escapeHtml(bench.typeLabel)}</option>`
     ).join("");
+    const defaultBench = data.benches.find((bench) => /^(?:१|1)$/.test(cleanText(bench.number))) || data.benches[0];
+    els.bench.value = defaultBench?.id || "all";
+    const judges = [...new Set(data.benches.flatMap((bench) => bench.judges).filter(Boolean))];
+    els.judge.innerHTML = `<option value="all">सबै न्यायाधीश</option>` + judges.map((judge) =>
+      `<option value="${escapeHtml(judge)}">${escapeHtml(judge)}</option>`
+    ).join("");
+    els.judge.value = "all";
   }
 
   function renderPreview() {
@@ -904,34 +938,46 @@ button:disabled { opacity: .45; pointer-events: none; }
     return [cleanText(parts[0]) || "—", cleanText(parts.slice(1).join(" ")) || "—"];
   }
 
-  function orderDocumentHTML(templateKey = els.template.value) {
+  function partyRoles(item) {
+    const text = `${item.section} ${item.subject} ${item.caseNumber}`;
+    if (/WO|WC|रिट|निषेधाज्ञा|परमादेश/i.test(text)) return ["निवेदक", "विपक्षी"];
+    if (/पुनरावेदन|अपिल|CS|DP/i.test(text)) return ["पुनरावेदक", "प्रत्यर्थी"];
+    return ["वादी", "प्रतिवादी"];
+  }
+
+  function judgeSignatureHTML(bench) {
+    const names = bench.judges.length ? bench.judges : ["माननीय न्यायाधीश"];
+    const signature = (judge, side = "") => `<div class="signature ${side}"><span class="signature-line"></span><strong>${/मु\.न्या\.|मुख्य/.test(judge) ? "मुख्य न्यायाधीश" : "न्यायाधीश"}</strong><p class="signature-name">${escapeHtml(judge)}</p></div>`;
+    if (bench.type === "division" && names.length > 1) return `${signature(names[1], "left")}${signature(names[0], "right")}`;
+    return signature(names[0], "right");
+  }
+
+  function orderDocumentHTML() {
     const item = state.currentCase;
     const bench = state.currentBench;
     if (!item || !bench) return "";
-    const template = orderTemplates[templateKey] || orderTemplates.general;
     const [firstParty, secondParty] = splitParties(item.parties);
+    const [firstRole, secondRole] = partyRoles(item);
     const judges = bench.judges.length ? bench.judges.join("<br>") : "माननीय न्यायाधीश";
+    const orderDate = els.orderDate.value || bench.date || "................";
     return `<div class="order-heading">
+      <p class="sri">श्री</p>
       <h2>${escapeHtml(bench.court || state.data.court)}</h2>
-      <p>${escapeHtml(bench.typeLabel)} · इजलास नं. ${escapeHtml(bench.number)}</p>
+      <h3>${escapeHtml(bench.typeLabel)}</h3>
+      <p><strong>इजलास नं. ${escapeHtml(bench.number)}</strong></p>
       <p>${escapeHtml(judges).replace(/&lt;br&gt;/g, "<br>")}</p>
-      <h1>आदेश</h1>
+      <h1 class="order-title">आदेश</h1>
+      <p class="case-caption">${/रिट/i.test(`${item.section} ${item.caseNumber}`) ? "रिट निवेदन नं." : "मुद्दा नं."} ${escapeHtml(item.caseNumber || "—")}</p>
+      <p class="case-subject"><strong>विषय:</strong> <u>${escapeHtml(item.subject || "—")}</u></p>
     </div>
-    <table class="order-meta">
-      <tr><td><strong>मुद्दा नं.</strong><br>${escapeHtml(item.caseNumber || "—")}</td><td><strong>मुद्दा</strong><br>${escapeHtml(item.subject || "—")}</td></tr>
-      <tr><td><strong>${escapeHtml(firstParty)}</strong><br><small>निवेदक/पुनरावेदक/वादी</small></td><td><strong>${escapeHtml(secondParty)}</strong><br><small>विपक्षी/प्रत्यर्थी/प्रतिवादी</small></td></tr>
-    </table>
-    <p><strong>आदेश मिति:</strong> ${escapeHtml(els.orderDate.value || bench.date || "................")}</p>
-    <p>यसमा प्रस्तुत मुद्दाको मिसिल अध्ययन गरी पक्ष/कानून व्यवसायीको भनाइसमेत सुनियो।</p>
-    <p>${escapeHtml(template.body)}</p>
-    <p>आदेशको जानकारी सम्बन्धित पक्षलाई दिई नियमानुसार गर्नू।</p>
-    <div class="signature-block"><p>....................................<br>न्यायाधीश</p></div>`;
-  }
-
-  function templateOptions(selected) {
-    return Object.entries(orderTemplates).map(([key, value]) =>
-      `<option value="${key}" ${key === selected ? "selected" : ""}>${escapeHtml(value.title)}</option>`
-    ).join("");
+    <div class="party-block">
+      <div class="party-line"><span class="party-name">${escapeHtml(firstParty)}</span><span class="party-leader"></span><span class="party-role">${firstRole}</span></div>
+      <p class="versus">विरुद्ध</p>
+      <div class="party-line"><span class="party-name">${escapeHtml(secondParty)}</span><span class="party-leader"></span><span class="party-role">${secondRole}</span></div>
+    </div>
+    <div class="order-main-body" data-placeholder="यहाँ आदेशको मुख्य व्यहोरा लेख्नुहोस्…"></div>
+    <div class="signature-row">${judgeSignatureHTML(bench)}</div>
+    <p class="order-footer">इति संवत् <span class="order-date-text">${escapeHtml(orderDate)}</span> शुभम् <span class="footer-leader"></span> ।</p>`;
   }
 
   function openOrder(benchId, caseId) {
@@ -940,25 +986,21 @@ button:disabled { opacity: .45; pointer-events: none; }
     if (!bench || !item) return;
     state.currentBench = bench;
     state.currentCase = item;
-    const key = recommendTemplate(item);
-    state.recommendation = key;
-    els.template.innerHTML = templateOptions(key);
     els.orderDate.value = bench.date || state.data.date || "";
-    els.recommendationTitle.textContent = orderTemplates[key].title;
-    els.recommendationReason.textContent = orderTemplates[key].reason;
+    els.recommendationTitle.textContent = "Cause-list बाट प्राप्त विवरण";
+    els.recommendationReason.textContent = "मुख्य आदेशको व्यहोरा खाली राखिएको छ। आवश्यक व्यहोरा आफैँ लेख्नुहोस्।";
     els.orderContext.textContent = `${item.caseNumber || "मुद्दा नं. उपलब्ध छैन"} · ${item.subject || "विषय उपलब्ध छैन"}`;
     els.caseFacts.innerHTML = `<dt>इजलास</dt><dd>${escapeHtml(bench.typeLabel)} · नं. ${escapeHtml(bench.number)}</dd>
       <dt>मुद्दा</dt><dd>${escapeHtml(item.subject || "—")}</dd>
       <dt>पक्षहरू</dt><dd>${escapeHtml(item.parties || "—")}</dd>
       <dt>कैफियत</dt><dd>${escapeHtml(item.remarks || "—")}</dd>
       <dt>अवस्था</dt><dd>${escapeHtml(`${item.caseStatus || "—"} · ${item.decisionStatus || "—"}`)}</dd>`;
-    const saved = loadSavedOrder(item.caseNumber);
-    els.orderEditor.innerHTML = saved || orderDocumentHTML(key);
+    els.orderEditor.innerHTML = orderDocumentHTML();
     els.orderWorkspace.hidden = false;
     els.floatingTools.hidden = false;
     updateWordCount();
     els.orderWorkspace.scrollIntoView({ behavior: "smooth", block: "start" });
-    showToast(saved ? "सुरक्षित मस्यौदा पुनःस्थापित भयो।" : "Cause-list अनुसार आदेशको मस्यौदा तयार भयो।");
+    showToast("Cause-list विवरणसहित खाली आदेश ढाँचा तयार भयो।");
   }
 
   function storageKey(caseNumber) {
@@ -1017,23 +1059,54 @@ button:disabled { opacity: .45; pointer-events: none; }
   }
 
   function orderStandaloneHTML() {
-    return `<!doctype html><html lang="ne"><head><meta charset="utf-8"><title>उच्च अदालत आदेश</title><style>@page{size:A4 portrait;margin:20mm}body{font-family:"Noto Sans Devanagari","Kalimati",serif;color:#111;line-height:1.85}.order-heading{text-align:center}.order-meta{width:100%;border-collapse:collapse;margin:18px 0}.order-meta td{border:1px solid #555;padding:6px}.signature-block{margin-top:60px;text-align:right}</style></head><body>${els.orderEditor.innerHTML}</body></html>`;
+    return `<!doctype html><html lang="ne"><head><meta charset="utf-8"><title>उच्च अदालत आदेश</title><style>
+      @page{size:A4 portrait;margin:20mm}body{font-family:"Noto Sans Devanagari","Kalimati",serif;color:#111;font-size:15px;line-height:1.85}.order-heading{text-align:center;line-height:1.45}.order-heading p,.order-heading h2,.order-heading h3{margin:0 0 2px}.sri{font-weight:700}.order-title{margin:8px 0 2px;text-decoration:underline}.case-caption,.case-subject{text-align:center;margin:0;font-weight:700}.party-block{margin:18px 0}.party-line{display:flex;align-items:flex-end;gap:8px;margin:7px 0;font-weight:600}.party-name{max-width:74%}.party-leader{flex:1;border-bottom:2px dotted #222}.party-role{min-width:72px;text-align:right}.versus{text-align:center;font-weight:700}.order-main-body{min-height:360px;margin-top:20px;text-align:justify;white-space:pre-wrap}.signature-row{display:grid;grid-template-columns:1fr 1fr;align-items:end;min-height:92px;margin-top:28px}.signature{text-align:center}.signature.right{grid-column:2}.signature-line{display:block;width:145px;margin:auto;border-top:1px dotted #333}.signature-name{margin:0;font-size:12px}.order-footer{margin-top:28px;font-weight:600}.footer-leader{display:inline-block;width:38%;border-bottom:2px dotted #222}
+    </style></head><body>${els.orderEditor.innerHTML}</body></html>`;
   }
 
   async function downloadWord() {
     if (!state.currentCase) return;
     if (!window.JSZip) {
-      downloadBlob(new Blob([orderStandaloneHTML()], { type: "application/msword" }), `${fileStem()}.doc`);
-      showToast("Word-compatible फाइल डाउनलोड भयो।");
+      showToast("DOCX library load भएन; page reload गरी पुनः प्रयास गर्नुहोस्।", true);
       return;
     }
     const zip = new JSZip();
-    const text = els.orderEditor.innerText.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "</w:t></w:r></w:p><w:p><w:r><w:t xml:space=\"preserve\">");
-    zip.file("[Content_Types].xml", '<?xml version="1.0"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>');
+    zip.file("[Content_Types].xml", '<?xml version="1.0"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="html" ContentType="text/html"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>');
     zip.folder("_rels").file(".rels", '<?xml version="1.0"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>');
-    zip.folder("word").file("document.xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t xml:space="preserve">${text}</w:t></w:r></w:p><w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134"/></w:sectPr></w:body></w:document>`);
+    const word = zip.folder("word");
+    word.file("document.xml", '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body><w:altChunk r:id="htmlChunk"/><w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134"/></w:sectPr></w:body></w:document>');
+    word.folder("_rels").file("document.xml.rels", '<?xml version="1.0"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="htmlChunk" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/aFChunk" Target="order.html"/></Relationships>');
+    word.file("order.html", orderStandaloneHTML());
     downloadBlob(await zip.generateAsync({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }), `${fileStem()}.docx`);
     showToast("Word (.docx) डाउनलोड भयो।");
+  }
+
+  function rtfUnicode(value) {
+    return String(value || "").replace(/[\\{}]/g, "\\$&").split("").map((char) => {
+      const code = char.charCodeAt(0);
+      if (code === 10) return "\\line ";
+      if (code < 128) return char;
+      return `\\u${code > 32767 ? code - 65536 : code}?`;
+    }).join("");
+  }
+
+  function downloadRTF() {
+    if (!state.currentCase || !state.currentBench) return;
+    const bench = state.currentBench, item = state.currentCase;
+    const [firstParty, secondParty] = splitParties(item.parties);
+    const [firstRole, secondRole] = partyRoles(item);
+    const body = els.orderEditor.querySelector(".order-main-body")?.innerText || "";
+    const judges = bench.judges.length ? bench.judges.map(rtfUnicode).join("\\line ") : rtfUnicode("माननीय न्यायाधीश");
+    const signatures = bench.type === "division" && bench.judges.length > 1
+      ? `${rtfUnicode(`${bench.judges[1]} - न्यायाधीश`)}\\tab ${rtfUnicode(`${bench.judges[0]} - ${/मु\.न्या\.|मुख्य/.test(bench.judges[0]) ? "मुख्य न्यायाधीश" : "न्यायाधीश"}`)}`
+      : `\\tab ${rtfUnicode(`${bench.judges[0] || "माननीय न्यायाधीश"} - न्यायाधीश`)}`;
+    const rtf = `{\\rtf1\\ansi\\deff0\\uc0{\\fonttbl{\\f0 Noto Sans Devanagari;}}\\paperw11906\\paperh16838\\margl1134\\margr1134\\margt1134\\margb1134\\fs24
+      \\qc\\b ${rtfUnicode("श्री")}\\line ${rtfUnicode(bench.court || state.data.court)}\\line ${rtfUnicode(bench.typeLabel)}\\line ${rtfUnicode(`इजलास नं. ${bench.number}`)}\\line ${judges}\\line ${rtfUnicode("आदेश")}\\line ${rtfUnicode(`${/रिट/i.test(item.caseNumber) ? "रिट निवेदन नं." : "मुद्दा नं."} ${item.caseNumber || "—"}`)}\\line ${rtfUnicode(`विषय: ${item.subject || "—"}`)}\\b0\\par
+      \\ql ${rtfUnicode(firstParty)}................................ ${rtfUnicode(firstRole)}\\par \\qc\\b ${rtfUnicode("विरुद्ध")}\\b0\\par \\ql ${rtfUnicode(secondParty)}................................ ${rtfUnicode(secondRole)}\\par
+      \\qj\\fi567 ${rtfUnicode(body)}\\par\\par\\par
+      \\ql ${signatures}\\par\\par ${rtfUnicode(`इति संवत् ${els.orderDate.value || bench.date || "........"} शुभम् ........................ ।`)} }`;
+    downloadBlob(new Blob([rtf], { type: "application/rtf;charset=utf-8" }), `${fileStem()}.rtf`);
+    showToast("RTF डाउनलोड भयो।");
   }
 
   function downloadOrderHTML() {
@@ -1064,10 +1137,12 @@ button:disabled { opacity: .45; pointer-events: none; }
     if (action === "save") saveOrder();
     if (action === "copy") copyOrder();
     if (action === "word") downloadWord();
+    if (action === "rtf") downloadRTF();
     if (action === "html") downloadOrderHTML();
     if (action === "preview") openOrderPreview();
     if (action === "print") printOrder();
     if (action === "top") window.scrollTo({ top: 0, behavior: "smooth" });
+    if (action === "tools") els.formatTools.hidden = !els.formatTools.hidden;
     if (action === "close") closeOrderPreview();
   }
 
@@ -1110,9 +1185,9 @@ button:disabled { opacity: .45; pointer-events: none; }
     catch (_) { showToast("फाइल पढ्न सकिएन।", true); }
     finally { els.file.value = ""; }
   });
-  [els.type, els.bench, els.deferred].forEach((el) => el.addEventListener("change", renderPreview));
+  [els.type, els.bench, els.judge, els.deferred].forEach((el) => el.addEventListener("change", renderPreview));
   els.search.addEventListener("input", renderPreview);
-  els.reset.addEventListener("click", () => { els.type.value = "all"; els.bench.value = "all"; els.search.value = ""; els.deferred.checked = false; renderPreview(); });
+  els.reset.addEventListener("click", () => { const first = state.data?.benches.find((bench) => /^(?:१|1)$/.test(cleanText(bench.number))) || state.data?.benches[0]; els.type.value = "all"; els.bench.value = first?.id || "all"; els.judge.value = "all"; els.search.value = ""; els.deferred.checked = false; renderPreview(); });
   els.print.addEventListener("click", () => window.print());
   els.download.addEventListener("click", downloadHTML);
   els.theme.addEventListener("click", () => {
@@ -1124,20 +1199,14 @@ button:disabled { opacity: .45; pointer-events: none; }
     const button = event.target.closest(".order-action");
     if (button) openOrder(button.dataset.bench, button.dataset.case);
   });
-  els.template.addEventListener("change", () => {
-    const template = orderTemplates[els.template.value];
-    els.recommendationTitle.textContent = template.title;
-    els.recommendationReason.textContent = template.reason;
-    els.orderEditor.innerHTML = orderDocumentHTML(els.template.value);
-    updateWordCount(); scheduleSave();
-  });
   els.orderDate.addEventListener("change", () => {
-    els.orderEditor.innerHTML = orderDocumentHTML(els.template.value);
-    updateWordCount(); scheduleSave();
+    const dateText = els.orderEditor.querySelector(".order-date-text");
+    if (dateText) dateText.textContent = els.orderDate.value || state.currentBench?.date || "................";
+    scheduleSave();
   });
   els.orderEditor.addEventListener("input", () => { updateWordCount(); scheduleSave(); });
-  $(".editor-toolbar").addEventListener("mousedown", (event) => event.preventDefault());
-  $(".editor-toolbar").addEventListener("click", (event) => {
+  els.formatTools.addEventListener("mousedown", (event) => event.preventDefault());
+  els.formatTools.addEventListener("click", (event) => {
     const button = event.target.closest("button");
     if (!button) return;
     if (button.id === "formatPainterButton") {
