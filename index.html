@@ -455,8 +455,8 @@ button:disabled { opacity: .45; pointer-events: none; }
         <li>उच्च अदालतको दैनिक पेसी सूची page को source copy गर्नुहोस् वा HTML/Markdown file खोल्नुहोस्।</li>
         <li><strong>Preview बनाउनुहोस्</strong> थिच्नुहोस्। Ctrl/Cmd + Enter ले पनि preview बन्छ।</li>
         <li>इजलास प्रकार, इजलास नं. वा मुद्दाको विवरणबाट filter गर्नुहोस्।</li>
-        <li>मुद्दाको <strong>आदेश बनाउनुहोस्</strong> थिचेर सुझाइएको ढाँचा सम्पादन गर्नुहोस्।</li>
-        <li><strong>Preview Page</strong> मा A4 आदेश जाँचेर Word/HTML/Print गर्नुहोस्।</li>
+        <li>मुद्दाको <strong>आदेश बनाउनुहोस्</strong> थिचेर cause-list बाट आएको संरचनाभित्र खाली मुख्य व्यहोरा लेख्नुहोस्।</li>
+        <li><strong>Preview Page</strong> मा A4 आदेश जाँचेर DOCX/RTF/HTML/Print गर्नुहोस्।</li>
       </ol>
       <p class="privacy-note">सबै parsing यही browser भित्र हुन्छ; source कुनै server मा पठाइँदैन।</p>
     </section>
@@ -1185,7 +1185,17 @@ button:disabled { opacity: .45; pointer-events: none; }
     catch (_) { showToast("फाइल पढ्न सकिएन।", true); }
     finally { els.file.value = ""; }
   });
-  [els.type, els.bench, els.judge, els.deferred].forEach((el) => el.addEventListener("change", renderPreview));
+  [els.type, els.bench, els.deferred].forEach((el) => el.addEventListener("change", renderPreview));
+  els.judge.addEventListener("change", () => {
+    if (els.judge.value !== "all") {
+      const matchingBench = state.data?.benches.find((bench) => bench.judges.includes(els.judge.value));
+      if (matchingBench) {
+        els.bench.value = matchingBench.id;
+        if (matchingBench.cases.length && matchingBench.cases.every(isDeferred)) els.deferred.checked = true;
+      }
+    }
+    renderPreview();
+  });
   els.search.addEventListener("input", renderPreview);
   els.reset.addEventListener("click", () => { const first = state.data?.benches.find((bench) => /^(?:१|1)$/.test(cleanText(bench.number))) || state.data?.benches[0]; els.type.value = "all"; els.bench.value = first?.id || "all"; els.judge.value = "all"; els.search.value = ""; els.deferred.checked = false; renderPreview(); });
   els.print.addEventListener("click", () => window.print());
