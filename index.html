@@ -8,8 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-:root {
+  <style>:root {
   --ink: #1b2540;
   --ink-soft: #536078;
   --paper: #ffffff;
@@ -138,7 +137,7 @@ button { border: 0; }
 button:disabled { opacity: .45; pointer-events: none; }
 .muted { color: var(--ink-soft); font-size: .9rem; }
 
-.summary-grid { display: grid; grid-template-columns: repeat(4, minmax(120px, 1fr)); gap: 12px; margin: 18px 0; }
+.summary-grid { display: grid; grid-template-columns: repeat(6, minmax(120px, 1fr)); gap: 12px; margin: 18px 0; }
 .summary-grid article { padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
 .summary-grid span { display: block; color: var(--ink-soft); font-size: .85rem; }
 .summary-grid strong { display: block; margin-top: 2px; color: var(--accent); font-size: 1.65rem; }
@@ -164,6 +163,9 @@ button:disabled { opacity: .45; pointer-events: none; }
   background: var(--paper);
   color: var(--ink);
 }
+.toggle-field { display:flex; align-items:center; gap:8px; min-height:42px; padding:8px 10px; border:1px solid var(--line); border-radius:9px; background:var(--paper); }
+.toggle-field input { width:18px; min-height:18px; accent-color:var(--accent); }
+.toggle-field span { margin:0 !important; }
 
 .empty-state { padding: 60px 20px; text-align: center; color: var(--ink-soft); border: 1px dashed var(--line); border-radius: 14px; }
 .empty-state h3 { margin: 8px 0 5px; color: var(--ink); }
@@ -193,6 +195,10 @@ button:disabled { opacity: .45; pointer-events: none; }
 .case-table .serial, .case-table .date, .case-table .case-no { white-space: nowrap; }
 .case-table a { color: #781926; font-weight: 600; text-decoration: none; }
 .case-table a:hover { text-decoration: underline; }
+.case-table .order-action { white-space:nowrap; padding:7px 10px; border-radius:8px; color:#fff; background:#7b1b29; font-weight:700; cursor:pointer; }
+.case-table .order-action:hover { background:#55121c; }
+.case-table tr.is-deferred { opacity:.72; background:#f3f0ef; }
+.status-chip { display:inline-flex; margin-top:5px; padding:2px 7px; border-radius:999px; color:#7b1b29; background:#f7e7ea; font-size:.7rem; font-weight:700; }
 .bench-footer { display: flex; justify-content: space-between; gap: 12px; padding: 9px 12px; color: #555; background: #f4f5f7; border-top: 1px solid #c6cad1; font-size: .78rem; }
 .no-results { padding: 34px; border: 1px dashed var(--line); border-radius: 12px; text-align: center; color: var(--ink-soft); }
 
@@ -204,10 +210,49 @@ button:disabled { opacity: .45; pointer-events: none; }
 .toast.error { background: #9d2635; }
 .sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
+.order-workspace { margin-bottom:24px; padding:clamp(18px,3vw,30px); border:1px solid var(--line); border-radius:var(--radius); background:var(--paper); box-shadow:var(--shadow); }
+.order-grid { display:grid; grid-template-columns:minmax(230px,310px) minmax(0,1fr); gap:18px; }
+.order-insights { align-self:start; position:sticky; top:98px; padding:18px; border:1px solid var(--line); border-radius:14px; background:var(--surface); }
+.order-insights h3 { margin:6px 0 7px; }
+.order-insights p { color:var(--ink-soft); }
+.order-insights dl { margin:16px 0; }
+.order-insights dt { margin-top:9px; color:var(--ink-soft); font-size:.74rem; font-weight:700; }
+.order-insights dd { margin:2px 0 0; overflow-wrap:anywhere; }
+.order-insights label { display:block; margin-top:12px; color:var(--ink-soft); font-size:.78rem; font-weight:700; }
+.order-insights select,.order-insights input { display:block; width:100%; min-height:42px; margin-top:5px; padding:8px 10px; border:1px solid var(--line); border-radius:9px; color:var(--ink); background:var(--paper); }
+.editor-card { min-width:0; overflow:hidden; border:1px solid var(--line); border-radius:14px; background:#e8e9ed; }
+.editor-toolbar { position:sticky; top:78px; z-index:4; display:flex; flex-wrap:wrap; gap:5px; padding:9px; border-bottom:1px solid #c7cad1; background:#fafafa; }
+.editor-toolbar button { min-width:36px; min-height:34px; border:1px solid #d3d5da; border-radius:7px; color:#242833; background:#fff; cursor:pointer; }
+.editor-toolbar button:hover,.editor-toolbar button.active { color:#fff; background:#7b1b29; border-color:#7b1b29; }
+.order-paper { width:min(210mm,calc(100% - 28px)); min-height:297mm; margin:14px auto; padding:22mm 20mm 20mm; color:#111; background:#fff; box-shadow:0 8px 28px rgba(20,25,35,.15); font-family:"Noto Sans Devanagari","Kalimati",serif; font-size:15px; line-height:1.85; outline:none; }
+.order-paper h1,.order-paper h2,.order-paper p { margin-top:0; }
+.order-paper .order-heading { text-align:center; line-height:1.5; }
+.order-paper .order-meta { width:100%; margin:18px 0; border-collapse:collapse; }
+.order-paper .order-meta td { padding:5px 8px; border:1px solid #555; vertical-align:top; }
+.order-paper .signature-block { margin-top:60px; text-align:right; }
+.editor-status { display:flex; justify-content:space-between; padding:8px 14px; color:#555; background:#fafafa; border-top:1px solid #ccc; font-size:.76rem; }
+.floating-tools { position:fixed; z-index:35; right:18px; top:50%; display:flex; flex-direction:column; gap:8px; transform:translateY(-50%); }
+.floating-tools button { display:flex; align-items:center; gap:8px; min-width:46px; min-height:44px; padding:9px 11px; border:1px solid #d6d9e0; border-radius:12px; color:#fff; background:#731824; box-shadow:0 8px 20px rgba(58,10,17,.2); cursor:pointer; }
+.floating-tools button span { max-width:0; overflow:hidden; opacity:0; transition:.18s; }
+.floating-tools button:hover span { max-width:70px; opacity:1; }
+.preview-dialog { width:min(1180px,96vw); max-width:none; height:94vh; padding:0; border:0; border-radius:16px; color:var(--ink); background:var(--surface); box-shadow:0 30px 80px rgba(0,0,0,.35); }
+.preview-dialog::backdrop { background:rgba(9,12,20,.76); backdrop-filter:blur(3px); }
+.preview-dialog > header { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; color:#fff; background:#681420; }
+.preview-dialog h2,.preview-dialog p { margin:0; }
+.icon-close { width:42px; height:42px; border-radius:50%; color:#fff; background:rgba(255,255,255,.12); font-size:1.7rem; cursor:pointer; }
+.preview-dialog-body { height:calc(94vh - 138px); padding:8px 0 35px; overflow:auto; }
+.preview-paper { pointer-events:none; }
+.preview-dock { display:flex; justify-content:center; flex-wrap:wrap; gap:8px; padding:12px; border-top:1px solid var(--line); background:var(--paper); }
+.preview-dock button { min-height:39px; padding:8px 13px; border:1px solid var(--line); border-radius:9px; color:var(--ink); background:var(--surface); cursor:pointer; }
+.preview-dock button:hover { color:#fff; background:var(--accent); }
+
 @media (max-width: 850px) {
   .filter-bar { grid-template-columns: 1fr 1fr; }
   .search-field { grid-column: 1 / -1; }
   .summary-grid { grid-template-columns: 1fr 1fr; }
+  .order-grid { grid-template-columns:1fr; }
+  .order-insights { position:static; }
+  .order-paper { padding:15mm 12mm; }
   .bench-head { grid-template-columns: 90px 1fr; }
   .bench-type { grid-column: 1 / -1; border: 0; border-top: 1px solid #aeb4bd; padding: 8px; }
 }
@@ -225,12 +270,15 @@ button:disabled { opacity: .45; pointer-events: none; }
   .search-field { grid-column: auto; }
   .bench-head { display: block; }
   .bench-number, .bench-type { border: 0; border-bottom: 1px solid #aeb4bd; text-align: center; }
+  .floating-tools { right:7px; top:auto; bottom:8px; flex-direction:row; transform:none; max-width:calc(100vw - 14px); overflow:auto; }
+  .floating-tools button { min-width:43px; padding:8px; }
+  .floating-tools button span { display:none; }
 }
 
 @media print {
   @page { size: A4 landscape; margin: 9mm; }
   body { background: #fff; }
-  .app-header, .source-panel, .preview-heading, .summary-grid, .filter-bar, .help-section, .toast, .empty-state { display: none !important; }
+  .app-header, .source-panel, .preview-heading, .summary-grid, .filter-bar, .help-section, .toast, .empty-state, .floating-tools, .order-insights, .editor-toolbar, .editor-status, .order-workspace > .section-heading, .preview-dock, .preview-dialog > header { display: none !important; }
   .workspace, .preview-section { width: auto; margin: 0; padding: 0; border: 0; box-shadow: none; }
   .bench-sheet { break-before: page; margin: 0; }
   .bench-sheet:first-of-type { break-before: auto; }
@@ -239,8 +287,12 @@ button:disabled { opacity: .45; pointer-events: none; }
   .case-table th { position: static; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .case-table td, .case-table th { padding: 4px; }
   .document-cover { padding-top: 0; }
+  body.print-order .preview-section, body.print-order .help-section { display:none !important; }
+  body.print-order .order-workspace { display:block !important; margin:0; padding:0; border:0; box-shadow:none; }
+  body.print-order .order-grid,.preview-dialog[open] .preview-dialog-body { display:block; }
+  body.print-order .editor-card { border:0; background:#fff; }
+  body.print-order .order-paper,.preview-dialog[open] .order-paper { width:100%; min-height:0; margin:0; padding:0; box-shadow:none; }
 }
-
 </style>
 </head>
 <body>
@@ -303,6 +355,8 @@ button:disabled { opacity: .45; pointer-events: none; }
         <article><span>एकल</span><strong id="singleCount">०</strong></article>
         <article><span>संयुक्त</span><strong id="divisionCount">०</strong></article>
         <article><span>जम्मा मुद्दा</span><strong id="caseCount">०</strong></article>
+        <article><span>अन्तरिम आदेश</span><strong id="interimCount">०</strong></article>
+        <article><span>स्थगित / हेर्न नमिल्ने</span><strong id="deferredCount">०</strong></article>
       </div>
 
       <div id="filters" class="filter-bar" hidden>
@@ -324,6 +378,10 @@ button:disabled { opacity: .45; pointer-events: none; }
           <span>मुद्दा खोज्नुहोस्</span>
           <input id="caseSearch" type="search" placeholder="मुद्दा नं., पक्ष, विषय वा कैफियत">
         </label>
+        <label class="toggle-field">
+          <input id="deferredToggle" type="checkbox">
+          <span>स्थगित/हेर्न नमिल्ने पनि देखाउने</span>
+        </label>
         <button id="resetFilters" class="text-button" type="button">Filter हटाउनुहोस्</button>
       </div>
 
@@ -336,22 +394,93 @@ button:disabled { opacity: .45; pointer-events: none; }
       <div id="previewRoot" class="cause-list-preview" aria-live="polite"></div>
     </section>
 
+    <section id="orderWorkspace" class="order-workspace" hidden aria-labelledby="orderTitle">
+      <div class="section-heading">
+        <div>
+          <p class="step">३ · ORDER BUILDER</p>
+          <h2 id="orderTitle">आदेश तयार गर्नुहोस्</h2>
+          <p id="orderContext">पेसी सूचीबाट मुद्दा छानेपछि उपयुक्त मस्यौदा यहाँ खुल्छ।</p>
+        </div>
+        <div class="button-row">
+          <button id="openPreviewButton" class="primary-button" type="button">Preview Page</button>
+          <button id="closeOrderButton" class="secondary-button" type="button">बन्द</button>
+        </div>
+      </div>
+      <div class="order-grid">
+        <aside class="order-insights">
+          <p class="step">CAUSE-LIST ANALYSIS</p>
+          <h3 id="recommendationTitle">सिफारिस गरिएको ढाँचा</h3>
+          <p id="recommendationReason"></p>
+          <dl id="caseFacts"></dl>
+          <label>आदेशको ढाँचा
+            <select id="templateSelect"></select>
+          </label>
+          <label>मिति
+            <input id="orderDate" type="text" placeholder="२०८३।०६।०३">
+          </label>
+        </aside>
+        <div class="editor-card">
+          <div class="editor-toolbar" role="toolbar" aria-label="आदेश सम्पादन उपकरण">
+            <button type="button" data-command="bold" title="Bold"><strong>B</strong></button>
+            <button type="button" data-command="italic" title="Italic"><em>I</em></button>
+            <button type="button" data-command="underline" title="Underline"><u>U</u></button>
+            <button type="button" data-command="justifyLeft" title="बायाँ">≡</button>
+            <button type="button" data-command="justifyCenter" title="बीच">≣</button>
+            <button type="button" data-command="justifyFull" title="दुवैतर्फ">☰</button>
+            <button type="button" data-command="insertOrderedList" title="Numbering">१.</button>
+            <button type="button" data-command="outdent" title="Indent घटाउने">⇤</button>
+            <button type="button" data-command="indent" title="Indent बढाउने">⇥</button>
+            <button type="button" id="formatPainterButton" title="Format painter">🖌</button>
+            <button type="button" data-command="removeFormat" title="Formatting हटाउने">Tx</button>
+          </div>
+          <article id="orderEditor" class="order-paper" contenteditable="true" spellcheck="false" aria-label="सम्पादनयोग्य आदेश"></article>
+          <footer class="editor-status"><span id="saveStatus">स्वतः सुरक्षित हुन्छ</span><span id="wordCount">० शब्द</span></footer>
+        </div>
+      </div>
+    </section>
+
     <section id="help" class="help-section">
-      <p class="step">३ · GUIDE</p>
+      <p class="step">४ · GUIDE</p>
       <h2>छोटो प्रयोग विधि</h2>
       <ol>
         <li>उच्च अदालतको दैनिक पेसी सूची page को source copy गर्नुहोस् वा HTML/Markdown file खोल्नुहोस्।</li>
         <li><strong>Preview बनाउनुहोस्</strong> थिच्नुहोस्। Ctrl/Cmd + Enter ले पनि preview बन्छ।</li>
         <li>इजलास प्रकार, इजलास नं. वा मुद्दाको विवरणबाट filter गर्नुहोस्।</li>
-        <li>सफा सूची print/PDF गर्नुहोस् वा offline खोल्न मिल्ने standalone HTML डाउनलोड गर्नुहोस्।</li>
+        <li>मुद्दाको <strong>आदेश बनाउनुहोस्</strong> थिचेर सुझाइएको ढाँचा सम्पादन गर्नुहोस्।</li>
+        <li><strong>Preview Page</strong> मा A4 आदेश जाँचेर Word/HTML/Print गर्नुहोस्।</li>
       </ol>
       <p class="privacy-note">सबै parsing यही browser भित्र हुन्छ; source कुनै server मा पठाइँदैन।</p>
     </section>
   </main>
 
+  <nav id="floatingTools" class="floating-tools" hidden aria-label="द्रुत आदेश उपकरण">
+    <button type="button" data-action="save" title="Save">💾<span>Save</span></button>
+    <button type="button" data-action="copy" title="Copy">⧉<span>Copy</span></button>
+    <button type="button" data-action="word" title="Word">W<span>Word</span></button>
+    <button type="button" data-action="preview" title="Preview">◫<span>Preview</span></button>
+    <button type="button" data-action="print" title="Print">⎙<span>Print</span></button>
+    <button type="button" data-action="top" title="माथि">↑<span>Top</span></button>
+  </nav>
+
+  <dialog id="orderPreviewDialog" class="preview-dialog">
+    <header>
+      <div><p class="step">ORDER PREVIEW</p><h2>आदेशको Preview Page</h2></div>
+      <button id="closePreviewButton" class="icon-close" type="button" aria-label="बन्द">×</button>
+    </header>
+    <div class="preview-dialog-body"><article id="orderPreviewPaper" class="order-paper preview-paper"></article></div>
+    <footer class="preview-dock">
+      <button type="button" data-preview-action="save">💾 Save</button>
+      <button type="button" data-preview-action="copy">⧉ Copy</button>
+      <button type="button" data-preview-action="word">W Word</button>
+      <button type="button" data-preview-action="html">⌘ HTML</button>
+      <button type="button" data-preview-action="print">⎙ Print</button>
+      <button type="button" data-preview-action="close">× Close</button>
+    </footer>
+  </dialog>
+
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script>
-(() => {
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script>(() => {
   "use strict";
 
   const $ = (selector) => document.querySelector(selector);
@@ -362,10 +491,17 @@ button:disabled { opacity: .45; pointer-events: none; }
     filters: $("#filters"), type: $("#benchTypeFilter"), bench: $("#benchFilter"),
     search: $("#caseSearch"), reset: $("#resetFilters"), print: $("#printButton"),
     download: $("#downloadButton"), theme: $("#themeToggle"), toast: $("#toast"),
-    subtitle: $("#previewSubtitle")
+    subtitle: $("#previewSubtitle"), deferred: $("#deferredToggle"),
+    orderWorkspace: $("#orderWorkspace"), orderEditor: $("#orderEditor"),
+    template: $("#templateSelect"), orderDate: $("#orderDate"),
+    orderContext: $("#orderContext"), recommendationTitle: $("#recommendationTitle"),
+    recommendationReason: $("#recommendationReason"), caseFacts: $("#caseFacts"),
+    saveStatus: $("#saveStatus"), wordCount: $("#wordCount"),
+    floatingTools: $("#floatingTools"), previewDialog: $("#orderPreviewDialog"),
+    previewPaper: $("#orderPreviewPaper")
   };
 
-  const state = { data: null, toastTimer: null };
+  const state = { data: null, toastTimer: null, currentCase: null, currentBench: null, recommendation: null, saveTimer: null, painter: null };
   const OFFICIAL_BASE = "https://supremecourt.gov.np/appeal/";
   const nepaliDigits = "०१२३४५६७८९";
 
@@ -386,7 +522,7 @@ button:disabled { opacity: .45; pointer-events: none; }
 </table>
 <table class="tableOth">
   <tr><th>क्र. सं</th><th>फाँट</th><th>दर्ता मिति</th><th>मुद्दा</th><th>मुद्दा. नं</th><th>पक्ष ।। बिपक्ष</th><th>का. व्य नाम (पक्ष)</th><th>का. व्य नाम (बिपक्ष)</th><th>कैफियत</th><th>मुद्दाको स्थिति</th><th>आदेश फैसलाको स्थिति</th></tr>
-  <tr><td>१</td><td>पुनरावेदन</td><td>२०८२।१०।०५</td><td>लेनदेन</td><td>०८२-DP-००५६</td><td>पुनरावेदक क । विरुद्ध । प्रत्यर्थी ख</td><td>—</td><td>—</td><td>प्रारम्भिक सुनुवाइ</td><td>सुनुवाइ</td><td>प्रत्यर्थी झिकाउने</td></tr>
+  <tr><td>१</td><td>पुनरावेदन</td><td>२०८२।१०।०५</td><td>लेनदेन</td><td>०८२-DP-००५६</td><td>पुनरावेदक क । विरुद्ध । प्रत्यर्थी ख</td><td>—</td><td>—</td><td>स्थगित</td><td>सुनुवाइ</td><td>प्रत्यर्थी झिकाउने</td></tr>
 </table>
 </body></html>`;
 
@@ -543,7 +679,7 @@ button:disabled { opacity: .45; pointer-events: none; }
       const typeLabel = type === "division" ? "संयुक्त इजलास" :
         type === "single" ? "एकल इजलास" :
         type === "commercial" ? "वाणिज्य इजलास" : "अन्य इजलास";
-      const cases = parseCaseTable(caseTable);
+      const cases = parseCaseTable(caseTable).map((item, caseIndex) => ({ ...item, _id: `case-${benches.length + 1}-${caseIndex + 1}` }));
 
       globalCourt = court;
       globalDate = date;
@@ -573,13 +709,45 @@ button:disabled { opacity: .45; pointer-events: none; }
     return String(value).replace(/\d/g, (digit) => nepaliDigits[Number(digit)]);
   }
 
+  function isDeferred(item) {
+    return /स्थगित|हेर्न\s*नमिल्ने|बेञ्च\s*नबस्ने|नहेर्ने|मुल्तबी/i.test(`${item.remarks} ${item.caseStatus} ${item.decisionStatus}`);
+  }
+
+  const orderTemplates = {
+    showCause: { title: "कारण देखाऊ आदेश", reason: "रिट/निवेदनको प्रारम्भिक सुनुवाइ र कारण देखाऊ संकेतका आधारमा।", body: "यसमा के कसो भएको हो? निवेदकको मागबमोजिमको आदेश किन जारी हुनु नपर्ने हो? आदेश जारी हुनु नपर्ने कुनै आधार, कारण र प्रमाण भए बाटाको म्याद बाहेक १५ (पन्ध्र) दिनभित्र सम्बन्धित मिसिल कागजातसहित विपक्षीहरूलाई लिखित जवाफ पेस गर्नू भनी यो आदेश र निवेदनको प्रतिलिपिसमेत साथै राखी म्याद सूचना जारी गरी लिखित जवाफ परे वा अवधि नाघेपछि नियमानुसार पेस गर्नू।" },
+    interim: { title: "अन्तरिम आदेश छलफलमा झिकाउने", reason: "कैफियत/स्थितिमा अन्तरिम आदेशसम्बन्धी सुनुवाइ देखिएकोले।", body: "निवेदकले माग गरेको अन्तरिम आदेश जारी हुने वा नहुने सम्बन्धमा दुवै पक्ष राखी छलफल गर्न उपयुक्त देखिँदा सो प्रयोजनका लागि मिति ........ को पेसी तोकी विपक्षीलाई सूचना दिनू। सो अवधिसम्म विषयवस्तुको प्रकृति र सम्भावित अपूरणीय क्षतिलाई विचार गरी यथास्थितिमा राख्नू/नराख्नू भन्ने सम्बन्धमा प्रस्तुत आदेश तत्काल कार्यान्वयन गर्नू।" },
+    denyInterim: { title: "अन्तरिम आदेश जारी नहुने", reason: "अन्तरिम मागमाथि सुनुवाइ/अस्वीकृतिको संकेत देखिएकोले।", body: "निवेदनको तथ्य, संलग्न कागजात र सुनुवाइमा व्यक्त जिकिरसमेत विचार गर्दा तत्काल अन्तरिम आदेश जारी गर्नुपर्ने प्रथम दृष्टि अवस्था र अपूरणीय क्षतिको आधार स्थापित भएको नदेखिँदा मागबमोजिम अन्तरिम आदेश जारी गरिरहन परेन। मुद्दाको अग्राधिकार/नियमानुसारको कारबाही यथावत् राख्नू।" },
+    reissue: { title: "म्याद पुनः जारी गर्ने", reason: "म्याद/सूचना तामेली वा पुनः जारीसम्बन्धी अवस्था देखिएकोले।", body: "यसअघि जारी भएको म्याद र तामेली प्रतिवेदन हेर्दा रीतपूर्वक तामेल भएको नदेखिएकोले सम्बन्धित पक्षका नाममा कानूनबमोजिम पुनः म्याद जारी गरी तामेल गराई अवधि नाघेपछि नियमानुसार पेस गर्नू।" },
+    record: { title: "कैफियत/मिसिल झिकाउने", reason: "सम्बन्धित अभिलेख वा मिसिल आवश्यक पर्ने प्रकृतिको मुद्दा देखिएकोले।", body: "प्रस्तुत विवाद निरूपणका लागि सम्बन्धित निकाय/अदालतको सक्कल मिसिल तथा आवश्यक कागजात अवलोकन गर्न आवश्यक देखिँदा यथाशीघ्र झिकाई प्राप्त भएपछि नियमानुसार पेस गर्नू।" },
+    summon: { title: "प्रत्यर्थी झिकाउने", reason: "पुनरावेदनको प्रारम्भिक सुनुवाइ वा प्रत्यर्थी झिकाउने संकेतका आधारमा।", body: "सुरु फैसला/आदेश फरक पर्न सक्ने अवस्था देखिएकाले छलफलका लागि प्रत्यर्थी झिकाई आएपछि वा अवधि नाघेपछि नियमानुसार पेस गर्नू।" },
+    adjourn: { title: "पेसी स्थगित गर्ने", reason: "कैफियतमा स्थगित/हेर्न नमिल्ने अवस्था देखिएकोले।", body: "आज प्रस्तुत मुद्दाको सुनुवाइ हुन नसक्ने अवस्था देखिँदा प्रस्तुत मुद्दा आजको पेसीबाट स्थगित गरी नियमानुसार अर्को पेसी चढाउनू।" },
+    uphold: { title: "सदर हुने", reason: "अन्तिम आदेश/फैसलामा सदरको संकेत देखिएकोले।", body: "मिसिल संलग्न प्रमाण, सुरु निर्णयको आधार र दुवै पक्षको बहस जिकिरसमेत विचार गर्दा सुरु अदालत/निकायको निर्णयमा परिवर्तन गर्नुपर्ने अवस्था नदेखिँदा उक्त निर्णय सदर हुने ठहर्छ। अरूमा तपसिलबमोजिम गर्नू।" },
+    setAside: { title: "उल्टी/बदर हुने", reason: "अन्तिम निर्णयमा उल्टी वा बदरको संकेत देखिएकोले।", body: "मिसिल संलग्न प्रमाण र कानूनी आधारसमेत विचार गर्दा सुरु निर्णय मिलेको नदेखिँदा उक्त निर्णय उल्टी/बदर हुने ठहर्छ। अब कानूनबमोजिम आवश्यक कारबाही गर्नु भनी सम्बन्धित निकायमा लेखी पठाउनू।" },
+    general: { title: "सामान्य प्रक्रियागत आदेश", reason: "Cause-list विवरणबाट विशेष ढाँचा निश्चित नभएकाले सम्पादनयोग्य सामान्य मस्यौदा।", body: "प्रस्तुत मुद्दामा आज भएको सुनुवाइ, मिसिल संलग्न कागजात र पक्षहरूको जिकिरसमेत विचार गरी आवश्यक कारबाहीका लागि नियमानुसार पेस गर्नू।" }
+  };
+
+  function recommendTemplate(item) {
+    const text = cleanText(`${item.subject} ${item.remarks} ${item.caseStatus} ${item.decisionStatus}`).toLowerCase();
+    if (isDeferred(item)) return "adjourn";
+    if (/उल्टी|बदर/.test(text)) return "setAside";
+    if (/सदर/.test(text)) return "uphold";
+    if (/अन्तरिम/.test(text) && /नहुने|अस्वीकार|खारेज/.test(text)) return "denyInterim";
+    if (/अन्तरिम/.test(text)) return "interim";
+    if (/पुनः.*म्याद|म्याद.*पुनः|तामेल/.test(text)) return "reissue";
+    if (/मिसिल|कैफियत.*झिक/.test(text)) return "record";
+    if (/प्रत्यर्थी.*झिक|विपक्षी.*झिक/.test(text)) return "summon";
+    if (/कारण.*देखाउ|लिखित.*जवाफ|रिट|निषेधाज्ञा|परमादेश/.test(text)) return "showCause";
+    return "general";
+  }
+
   function linkOrText(text, url) {
     const label = escapeHtml(text || "—");
     return url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${label}</a>` : label;
   }
 
-  function caseRowHTML(item) {
-    return `<tr>
+  function caseRowHTML(item, bench) {
+    const deferred = isDeferred(item);
+    return `<tr class="${deferred ? "is-deferred" : ""}">
       <td class="serial">${escapeHtml(item.serial || "—")}</td>
       <td>${escapeHtml(item.section || "—")}</td>
       <td class="date">${escapeHtml(item.registrationDate || "—")}</td>
@@ -590,7 +758,8 @@ button:disabled { opacity: .45; pointer-events: none; }
       <td>${escapeHtml(item.counselAgainst || "—")}</td>
       <td>${escapeHtml(item.remarks || "—")}</td>
       <td>${escapeHtml(item.caseStatus || "—")}</td>
-      <td>${linkOrText(item.decisionStatus, item.decisionUrl)}</td>
+      <td>${linkOrText(item.decisionStatus, item.decisionUrl)}${deferred ? '<span class="status-chip">स्थगित/नमिल्ने</span>' : ""}</td>
+      <td><button class="order-action" type="button" data-bench="${escapeHtml(bench.id)}" data-case="${escapeHtml(item._id)}">आदेश बनाउनुहोस्</button></td>
     </tr>`;
   }
 
@@ -599,8 +768,8 @@ button:disabled { opacity: .45; pointer-events: none; }
       ? bench.judges.map((judge) => `<span>${escapeHtml(judge)}</span>`).join("")
       : "<span>न्यायाधीशको नाम source मा उपलब्ध छैन</span>";
     const rows = cases.length
-      ? cases.map(caseRowHTML).join("")
-      : `<tr><td colspan="11" style="padding:28px;text-align:center">यस filter मा मुद्दा भेटिएन।</td></tr>`;
+      ? cases.map((item) => caseRowHTML(item, bench)).join("")
+      : `<tr><td colspan="12" style="padding:28px;text-align:center">यस filter मा मुद्दा भेटिएन।</td></tr>`;
 
     return `<section class="bench-sheet" data-bench-id="${escapeHtml(bench.id)}">
       <header class="bench-head">
@@ -613,7 +782,7 @@ button:disabled { opacity: .45; pointer-events: none; }
           <thead><tr>
             <th>क्र.सं.</th><th>फाँट</th><th>दर्ता मिति</th><th>मुद्दा</th><th>मुद्दा नं.</th>
             <th>पक्ष / विपक्ष</th><th>का.व्य. (पक्ष)</th><th>का.व्य. (विपक्ष)</th><th>कैफियत</th>
-            <th>मुद्दाको स्थिति</th><th>आदेश/फैसलाको स्थिति</th>
+            <th>मुद्दाको स्थिति</th><th>आदेश/फैसलाको स्थिति</th><th>आदेश</th>
           </tr></thead>
           <tbody>${rows}</tbody>
         </table>
@@ -631,12 +800,13 @@ button:disabled { opacity: .45; pointer-events: none; }
       .filter((bench) => type === "all" || bench.type === type)
       .filter((bench) => benchId === "all" || bench.id === benchId)
       .map((bench) => {
-        const cases = !query ? bench.cases : bench.cases.filter((item) =>
+        const visible = els.deferred.checked ? bench.cases : bench.cases.filter((item) => !isDeferred(item));
+        const cases = !query ? visible : visible.filter((item) =>
           Object.values(item).some((value) => typeof value === "string" && value.toLocaleLowerCase("ne-NP").includes(query))
         );
         return { bench, cases };
       })
-      .filter(({ cases }) => !query || cases.length);
+      .filter(({ cases }) => cases.length);
   }
 
   function documentHTML(data, filtered = filteredBenches(data)) {
@@ -655,10 +825,15 @@ button:disabled { opacity: .45; pointer-events: none; }
     const single = data.benches.filter((b) => b.type === "single").length;
     const division = data.benches.filter((b) => b.type === "division").length;
     const cases = data.benches.reduce((sum, bench) => sum + bench.cases.length, 0);
+    const allCases = data.benches.flatMap((bench) => bench.cases);
+    const interim = allCases.filter((item) => /अन्तरिम/i.test(`${item.subject} ${item.remarks} ${item.caseStatus} ${item.decisionStatus}`)).length;
+    const deferred = allCases.filter(isDeferred).length;
     $("#benchCount").textContent = toNepaliDigits(data.benches.length);
     $("#singleCount").textContent = toNepaliDigits(single);
     $("#divisionCount").textContent = toNepaliDigits(division);
     $("#caseCount").textContent = toNepaliDigits(cases);
+    $("#interimCount").textContent = toNepaliDigits(interim);
+    $("#deferredCount").textContent = toNepaliDigits(deferred);
   }
 
   function populateBenchFilter(data) {
@@ -682,6 +857,7 @@ button:disabled { opacity: .45; pointer-events: none; }
       state.data = data;
       els.type.value = "all";
       els.search.value = "";
+      els.deferred.checked = false;
       populateBenchFilter(data);
       updateStats(data);
       renderPreview();
@@ -723,6 +899,178 @@ button:disabled { opacity: .45; pointer-events: none; }
     state.toastTimer = setTimeout(() => els.toast.classList.remove("show"), 3200);
   }
 
+  function splitParties(value) {
+    const parts = String(value || "").split(/\s*(?:।।|विरुद्ध|बनाम|vs\.?|v\.?)\s*/i);
+    return [cleanText(parts[0]) || "—", cleanText(parts.slice(1).join(" ")) || "—"];
+  }
+
+  function orderDocumentHTML(templateKey = els.template.value) {
+    const item = state.currentCase;
+    const bench = state.currentBench;
+    if (!item || !bench) return "";
+    const template = orderTemplates[templateKey] || orderTemplates.general;
+    const [firstParty, secondParty] = splitParties(item.parties);
+    const judges = bench.judges.length ? bench.judges.join("<br>") : "माननीय न्यायाधीश";
+    return `<div class="order-heading">
+      <h2>${escapeHtml(bench.court || state.data.court)}</h2>
+      <p>${escapeHtml(bench.typeLabel)} · इजलास नं. ${escapeHtml(bench.number)}</p>
+      <p>${escapeHtml(judges).replace(/&lt;br&gt;/g, "<br>")}</p>
+      <h1>आदेश</h1>
+    </div>
+    <table class="order-meta">
+      <tr><td><strong>मुद्दा नं.</strong><br>${escapeHtml(item.caseNumber || "—")}</td><td><strong>मुद्दा</strong><br>${escapeHtml(item.subject || "—")}</td></tr>
+      <tr><td><strong>${escapeHtml(firstParty)}</strong><br><small>निवेदक/पुनरावेदक/वादी</small></td><td><strong>${escapeHtml(secondParty)}</strong><br><small>विपक्षी/प्रत्यर्थी/प्रतिवादी</small></td></tr>
+    </table>
+    <p><strong>आदेश मिति:</strong> ${escapeHtml(els.orderDate.value || bench.date || "................")}</p>
+    <p>यसमा प्रस्तुत मुद्दाको मिसिल अध्ययन गरी पक्ष/कानून व्यवसायीको भनाइसमेत सुनियो।</p>
+    <p>${escapeHtml(template.body)}</p>
+    <p>आदेशको जानकारी सम्बन्धित पक्षलाई दिई नियमानुसार गर्नू।</p>
+    <div class="signature-block"><p>....................................<br>न्यायाधीश</p></div>`;
+  }
+
+  function templateOptions(selected) {
+    return Object.entries(orderTemplates).map(([key, value]) =>
+      `<option value="${key}" ${key === selected ? "selected" : ""}>${escapeHtml(value.title)}</option>`
+    ).join("");
+  }
+
+  function openOrder(benchId, caseId) {
+    const bench = state.data && state.data.benches.find((entry) => entry.id === benchId);
+    const item = bench && bench.cases.find((entry) => entry._id === caseId);
+    if (!bench || !item) return;
+    state.currentBench = bench;
+    state.currentCase = item;
+    const key = recommendTemplate(item);
+    state.recommendation = key;
+    els.template.innerHTML = templateOptions(key);
+    els.orderDate.value = bench.date || state.data.date || "";
+    els.recommendationTitle.textContent = orderTemplates[key].title;
+    els.recommendationReason.textContent = orderTemplates[key].reason;
+    els.orderContext.textContent = `${item.caseNumber || "मुद्दा नं. उपलब्ध छैन"} · ${item.subject || "विषय उपलब्ध छैन"}`;
+    els.caseFacts.innerHTML = `<dt>इजलास</dt><dd>${escapeHtml(bench.typeLabel)} · नं. ${escapeHtml(bench.number)}</dd>
+      <dt>मुद्दा</dt><dd>${escapeHtml(item.subject || "—")}</dd>
+      <dt>पक्षहरू</dt><dd>${escapeHtml(item.parties || "—")}</dd>
+      <dt>कैफियत</dt><dd>${escapeHtml(item.remarks || "—")}</dd>
+      <dt>अवस्था</dt><dd>${escapeHtml(`${item.caseStatus || "—"} · ${item.decisionStatus || "—"}`)}</dd>`;
+    const saved = loadSavedOrder(item.caseNumber);
+    els.orderEditor.innerHTML = saved || orderDocumentHTML(key);
+    els.orderWorkspace.hidden = false;
+    els.floatingTools.hidden = false;
+    updateWordCount();
+    els.orderWorkspace.scrollIntoView({ behavior: "smooth", block: "start" });
+    showToast(saved ? "सुरक्षित मस्यौदा पुनःस्थापित भयो।" : "Cause-list अनुसार आदेशको मस्यौदा तयार भयो।");
+  }
+
+  function storageKey(caseNumber) {
+    return `hcc-order-${String(caseNumber || "draft").replace(/\s+/g, "-")}`;
+  }
+
+  function loadSavedOrder(caseNumber) {
+    try { return localStorage.getItem(storageKey(caseNumber)) || ""; } catch (_) { return ""; }
+  }
+
+  function saveOrder(silent = false) {
+    if (!state.currentCase) return;
+    try {
+      localStorage.setItem(storageKey(state.currentCase.caseNumber), els.orderEditor.innerHTML);
+      const history = JSON.parse(localStorage.getItem("hcc-order-history") || "[]");
+      history.unshift({ caseNumber: state.currentCase.caseNumber, title: state.currentCase.subject, savedAt: new Date().toISOString() });
+      localStorage.setItem("hcc-order-history", JSON.stringify(history.slice(0, 20)));
+      els.saveStatus.textContent = `सुरक्षित · ${new Date().toLocaleTimeString("ne-NP", { hour: "2-digit", minute: "2-digit" })}`;
+      if (!silent) showToast("आदेश browser मा सुरक्षित भयो।");
+    } catch (_) { if (!silent) showToast("आदेश सुरक्षित गर्न सकिएन।", true); }
+  }
+
+  function scheduleSave() {
+    clearTimeout(state.saveTimer);
+    els.saveStatus.textContent = "परिवर्तन हुँदैछ…";
+    state.saveTimer = setTimeout(() => saveOrder(true), 650);
+  }
+
+  function updateWordCount() {
+    const words = cleanText(els.orderEditor.innerText).split(/\s+/).filter(Boolean).length;
+    els.wordCount.textContent = `${toNepaliDigits(words)} शब्द`;
+  }
+
+  async function copyOrder() {
+    if (!state.currentCase) return;
+    try {
+      if (navigator.clipboard && window.ClipboardItem) {
+        await navigator.clipboard.write([new ClipboardItem({
+          "text/html": new Blob([els.orderEditor.innerHTML], { type: "text/html" }),
+          "text/plain": new Blob([els.orderEditor.innerText], { type: "text/plain" })
+        })]);
+      } else await navigator.clipboard.writeText(els.orderEditor.innerText);
+      showToast("आदेश copy भयो।");
+    } catch (_) { showToast("Copy गर्न browser अनुमति आवश्यक छ।", true); }
+  }
+
+  function downloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url; anchor.download = filename; document.body.appendChild(anchor); anchor.click(); anchor.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1200);
+  }
+
+  function fileStem() {
+    return `high-court-order-${String(state.currentCase?.caseNumber || "draft").replace(/[^०-९0-9A-Za-z-]+/g, "-")}`;
+  }
+
+  function orderStandaloneHTML() {
+    return `<!doctype html><html lang="ne"><head><meta charset="utf-8"><title>उच्च अदालत आदेश</title><style>@page{size:A4 portrait;margin:20mm}body{font-family:"Noto Sans Devanagari","Kalimati",serif;color:#111;line-height:1.85}.order-heading{text-align:center}.order-meta{width:100%;border-collapse:collapse;margin:18px 0}.order-meta td{border:1px solid #555;padding:6px}.signature-block{margin-top:60px;text-align:right}</style></head><body>${els.orderEditor.innerHTML}</body></html>`;
+  }
+
+  async function downloadWord() {
+    if (!state.currentCase) return;
+    if (!window.JSZip) {
+      downloadBlob(new Blob([orderStandaloneHTML()], { type: "application/msword" }), `${fileStem()}.doc`);
+      showToast("Word-compatible फाइल डाउनलोड भयो।");
+      return;
+    }
+    const zip = new JSZip();
+    const text = els.orderEditor.innerText.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "</w:t></w:r></w:p><w:p><w:r><w:t xml:space=\"preserve\">");
+    zip.file("[Content_Types].xml", '<?xml version="1.0"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>');
+    zip.folder("_rels").file(".rels", '<?xml version="1.0"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>');
+    zip.folder("word").file("document.xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t xml:space="preserve">${text}</w:t></w:r></w:p><w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134"/></w:sectPr></w:body></w:document>`);
+    downloadBlob(await zip.generateAsync({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }), `${fileStem()}.docx`);
+    showToast("Word (.docx) डाउनलोड भयो।");
+  }
+
+  function downloadOrderHTML() {
+    downloadBlob(new Blob([orderStandaloneHTML()], { type: "text/html;charset=utf-8" }), `${fileStem()}.html`);
+    showToast("Standalone HTML डाउनलोड भयो।");
+  }
+
+  function openOrderPreview() {
+    if (!state.currentCase) return;
+    saveOrder(true);
+    els.previewPaper.innerHTML = els.orderEditor.innerHTML;
+    if (typeof els.previewDialog.showModal === "function") els.previewDialog.showModal();
+    else els.previewDialog.setAttribute("open", "");
+  }
+
+  function closeOrderPreview() { if (els.previewDialog.open && els.previewDialog.close) els.previewDialog.close(); else els.previewDialog.removeAttribute("open"); }
+
+  function printOrder() {
+    if (!state.currentCase) return;
+    document.body.classList.add("print-order");
+    const cleanup = () => { document.body.classList.remove("print-order"); window.removeEventListener("afterprint", cleanup); };
+    window.addEventListener("afterprint", cleanup);
+    window.print();
+    setTimeout(cleanup, 1500);
+  }
+
+  function performOrderAction(action) {
+    if (action === "save") saveOrder();
+    if (action === "copy") copyOrder();
+    if (action === "word") downloadWord();
+    if (action === "html") downloadOrderHTML();
+    if (action === "preview") openOrderPreview();
+    if (action === "print") printOrder();
+    if (action === "top") window.scrollTo({ top: 0, behavior: "smooth" });
+    if (action === "close") closeOrderPreview();
+  }
+
   function standaloneHTML(data) {
     const all = data.benches.map((bench) => ({ bench, cases: bench.cases }));
     const body = documentHTML(data, all);
@@ -751,6 +1099,7 @@ button:disabled { opacity: .45; pointer-events: none; }
     els.source.value = ""; state.data = null; els.root.innerHTML = ""; els.empty.hidden = false;
     els.summary.hidden = true; els.filters.hidden = true; els.print.disabled = true; els.download.disabled = true;
     els.status.textContent = "Source राखेपछि Preview बनाउनुहोस्।";
+    els.orderWorkspace.hidden = true; els.floatingTools.hidden = true;
     try { localStorage.removeItem("hcc-source-draft"); } catch (_) {}
     els.source.focus();
   });
@@ -761,9 +1110,9 @@ button:disabled { opacity: .45; pointer-events: none; }
     catch (_) { showToast("फाइल पढ्न सकिएन।", true); }
     finally { els.file.value = ""; }
   });
-  [els.type, els.bench].forEach((el) => el.addEventListener("change", renderPreview));
+  [els.type, els.bench, els.deferred].forEach((el) => el.addEventListener("change", renderPreview));
   els.search.addEventListener("input", renderPreview);
-  els.reset.addEventListener("click", () => { els.type.value = "all"; els.bench.value = "all"; els.search.value = ""; renderPreview(); });
+  els.reset.addEventListener("click", () => { els.type.value = "all"; els.bench.value = "all"; els.search.value = ""; els.deferred.checked = false; renderPreview(); });
   els.print.addEventListener("click", () => window.print());
   els.download.addEventListener("click", downloadHTML);
   els.theme.addEventListener("click", () => {
@@ -771,8 +1120,61 @@ button:disabled { opacity: .45; pointer-events: none; }
     document.documentElement.dataset.theme = dark ? "light" : "dark";
     try { localStorage.setItem("hcc-theme", dark ? "light" : "dark"); } catch (_) {}
   });
+  els.root.addEventListener("click", (event) => {
+    const button = event.target.closest(".order-action");
+    if (button) openOrder(button.dataset.bench, button.dataset.case);
+  });
+  els.template.addEventListener("change", () => {
+    const template = orderTemplates[els.template.value];
+    els.recommendationTitle.textContent = template.title;
+    els.recommendationReason.textContent = template.reason;
+    els.orderEditor.innerHTML = orderDocumentHTML(els.template.value);
+    updateWordCount(); scheduleSave();
+  });
+  els.orderDate.addEventListener("change", () => {
+    els.orderEditor.innerHTML = orderDocumentHTML(els.template.value);
+    updateWordCount(); scheduleSave();
+  });
+  els.orderEditor.addEventListener("input", () => { updateWordCount(); scheduleSave(); });
+  $(".editor-toolbar").addEventListener("mousedown", (event) => event.preventDefault());
+  $(".editor-toolbar").addEventListener("click", (event) => {
+    const button = event.target.closest("button");
+    if (!button) return;
+    if (button.id === "formatPainterButton") {
+      const selection = window.getSelection();
+      const node = selection && selection.anchorNode && (selection.anchorNode.nodeType === 3 ? selection.anchorNode.parentElement : selection.anchorNode);
+      state.painter = node && els.orderEditor.contains(node) ? node.getAttribute("style") || "font-weight:700" : "font-weight:700";
+      button.classList.add("active");
+      showToast("अब format लगाउने text छान्नुहोस्।");
+      return;
+    }
+    if (button.dataset.command) {
+      els.orderEditor.focus();
+      document.execCommand(button.dataset.command, false, null);
+      updateWordCount(); scheduleSave();
+    }
+  });
+  els.orderEditor.addEventListener("mouseup", () => {
+    if (!state.painter) return;
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed || !selection.rangeCount) return;
+    try {
+      const span = document.createElement("span"); span.setAttribute("style", state.painter); selection.getRangeAt(0).surroundContents(span);
+      showToast("Format लागू भयो।"); scheduleSave();
+    } catch (_) { showToast("एउटै paragraph भित्रको text छान्नुहोस्।", true); }
+    state.painter = null; $("#formatPainterButton").classList.remove("active");
+  });
+  $("#openPreviewButton").addEventListener("click", openOrderPreview);
+  $("#closeOrderButton").addEventListener("click", () => { els.orderWorkspace.hidden = true; els.floatingTools.hidden = true; });
+  $("#closePreviewButton").addEventListener("click", closeOrderPreview);
+  els.previewDialog.addEventListener("click", (event) => { if (event.target === els.previewDialog) closeOrderPreview(); });
+  els.floatingTools.addEventListener("click", (event) => { const button = event.target.closest("button[data-action]"); if (button) performOrderAction(button.dataset.action); });
+  $(".preview-dock").addEventListener("click", (event) => { const button = event.target.closest("button[data-preview-action]"); if (button) performOrderAction(button.dataset.previewAction); });
   document.addEventListener("keydown", (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key === "Enter") { event.preventDefault(); buildPreview(); }
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s" && state.currentCase) { event.preventDefault(); saveOrder(); }
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "p" && state.currentCase) { event.preventDefault(); printOrder(); }
+    if (event.key === "Escape" && els.previewDialog.open) closeOrderPreview();
   });
 
   try {
@@ -781,7 +1183,6 @@ button:disabled { opacity: .45; pointer-events: none; }
     if (draft) { els.source.value = draft; els.status.textContent = "अघिल्लो draft पुनःस्थापित भयो।"; }
   } catch (_) { document.documentElement.dataset.theme = "light"; }
 })();
-
 </script>
 </body>
 </html>
